@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamet Tadeo Mendoza López | Secretario Proyectista - TSJEH</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            DEFAULT: '#0a0d14',
+                            card: '#131924',
+                            elevated: '#1a2230',
+                            border: '#253043',
+                            muted: '#94a3b8'
+                        },
+                        gold: {
+                            DEFAULT: '#c5a059',
+                            light: '#e0c38c',
+                            dark: '#9a793a'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0d14;
+            color: #e2e8f0;
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f3e5ab 0%, #c5a059 50%, #9a793a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border {
+            border-color: rgba(197, 160, 89, 0.3);
+        }
+        .gold-border-hover:hover {
+            border-color: rgba(197, 160, 89, 0.7);
+        }
+        .glow-gold {
+            box-shadow: 0 0 25px -5px rgba(197, 160, 89, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0d14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #253043;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5a059;
+        }
+    </style>
+</head>
+<body class="bg-obsidian text-slate-300 antialiased selection:bg-gold/30 selection:text-gold-light">
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-45 transition-all duration-300 bg-obsidian/85 backdrop-blur-md border-b border-obsidian-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- LOGO HT -->
+            <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
+                <div class="w-11 h-11 rounded-lg bg-obsidian-elevated border border-gold/40 flex items-center justify-center shadow-lg group-hover:border-gold transition-all duration-300">
+                    <span class="font-serif text-xl font-bold tracking-wider gold-gradient-text">HT</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-serif font-bold text-slate-100 tracking-wide text-sm sm:text-base group-hover:text-gold transition-colors">Hamet Tadeo</span>
+                    <span class="text-[10px] tracking-widest text-gold uppercase font-medium">Secretario Proyectista</span>
+                </div>
+            </a>
+
+            <!-- DESKTOP NAV -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#semblanza" class="text-sm font-medium text-slate-300 hover:text-gold transition-colors">Semblanza</a>
+                <a href="#formacion" class="text-sm font-medium text-slate-300 hover:text-gold transition-colors">Formación</a>
+                <a href="#experiencia" class="text-sm font-medium text-slate-300 hover:text-gold transition-colors">Experiencia</a>
+                <a href="#publicaciones" class="text-sm font-medium text-slate-300 hover:text-gold transition-colors">Publicaciones</a>
+                <a href="#contacto" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-obsidian bg-gold hover:bg-gold-light rounded transition-all duration-300 shadow-md">Contacto</a>
+            </nav>
+
+            <!-- MOBILE MENU BUTTON -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-300 hover:text-gold focus:outline-none" aria-label="Abrir menú">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden bg-obsidian-card border-b border-obsidian-border px-6 py-5 space-y-4 shadow-2xl">
+            <a href="#semblanza" class="block text-sm font-medium text-slate-300 hover:text-gold transition-colors py-1 mobile-link">Semblanza</a>
+            <a href="#formacion" class="block text-sm font-medium text-slate-300 hover:text-gold transition-colors py-1 mobile-link">Formación</a>
+            <a href="#experiencia" class="block text-sm font-medium text-slate-300 hover:text-gold transition-colors py-1 mobile-link">Experiencia</a>
+            <a href="#publicaciones" class="block text-sm font-medium text-slate-300 hover:text-gold transition-colors py-1 mobile-link">Publicaciones</a>
+            <a href="#contacto" class="block text-center w-full py-2.5 text-xs font-semibold uppercase tracking-wider text-obsidian bg-gold hover:bg-gold-light rounded transition-all mobile-link">Contacto Institucional</a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute inset-0 pointer-events-none opacity-25">
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-gold/10 to-transparent rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-950/20 rounded-full blur-2xl"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            
+            <!-- Monogram badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-card border border-gold/30 mb-8 shadow-sm">
+                <i class="fa-solid fa-scale-balanced text-gold text-xs"></i>
+                <span class="text-xs uppercase tracking-widest text-gold font-medium">Poder Judicial del Estado de Hidalgo</span>
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-100 mb-6 leading-tight">
+                Hamet Tadeo <br class="hidden sm:inline">
+                <span class="gold-gradient-text font-serif italic">Mendoza López</span>
+            </h1>
+
+            <!-- Subtitle / Role -->
+            <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-4">
+                Secretario Proyectista en las Salas Penales del TSJEH
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-obsidian-muted mb-10">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-gavel text-gold"></i> Derecho Penal</span>
+                <span>•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-gold"></i> Sistema Acusatorio</span>
+                <span>•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-gold"></i> Pachuca de Soto, Hgo.</span>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#contacto" class="w-full sm:w-auto px-8 py-3.5 rounded bg-gold hover:bg-gold-light text-obsidian font-semibold text-sm tracking-wider uppercase transition-all shadow-lg shadow-gold/10 flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-envelope"></i> Contacto Profesional
+                </a>
+                <a href="#semblanza" class="w-full sm:w-auto px-8 py-3.5 rounded bg-obsidian-card hover:bg-obsidian-elevated text-slate-200 border border-obsidian-border hover:border-gold/50 font-medium text-sm transition-all flex items-center justify-center gap-2">
+                    <span>Conocer trayectoria</span>
+                    <i class="fa-solid fa-arrow-down text-xs text-gold"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SEMBLANZA PERSONAL E INSTITUCIONAL -->
+    <section id="semblanza" class="py-24 bg-obsidian-card/40 border-y border-obsidian-border relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left column: Profile / Monogram visual box -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-sm aspect-[4/5] rounded-xl bg-obsidian-card border border-gold/30 p-6 flex flex-col justify-between shadow-2xl glow-gold overflow-hidden group">
+                        <!-- Decorative background emblem -->
+                        <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl font-serif text-gold select-none">HT</div>
+                        
+                        <div class="flex justify-between items-start z-10">
+                            <span class="text-xs uppercase tracking-widest text-gold font-semibold">Perfil Profesional</span>
+                            <div class="w-8 h-8 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
+                                <i class="fa-solid fa-feather text-xs"></i>
+                            </div>
+                        </div>
+
+                        <div class="my-auto text-center z-10 py-6">
+                            <div class="w-24 h-24 mx-auto rounded-full bg-obsidian border-2 border-gold/50 flex items-center justify-center shadow-xl mb-4 group-hover:scale-105 transition-transform duration-500">
+                                <span class="font-serif text-4xl font-bold gold-gradient-text">HT</span>
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-slate-100">Lic. Hamet Tadeo Mendoza López</h3>
+                            <p class="text-xs text-gold mt-1">TSJEH • Hidalgo, México</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-obsidian-border text-xs text-obsidian-muted flex justify-between items-center z-10">
+                            <span>Jurisdicción Penal</span>
+                            <span class="text-slate-200 font-medium">Segunda Instancia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: Text content -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 text-gold text-xs uppercase tracking-widest font-semibold">
+                        <i class="fa-solid fa-bookmark"></i> Semblanza Institucional
+                    </div>
+                    
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-100 leading-snug">
+                        Rigurosidad jurídica, técnica penal y compromiso con la impartición de justicia.
+                    </h2>
+
+                    <div class="space-y-4 text-slate-300 font-light leading-relaxed">
+                        <p>
+                            Profesional del derecho con sólida especialización en materia penal y técnica de litigación y resolución en el Sistema de Justicia Penal Acusatorio. Actualmente se desempeña como <strong class="text-slate-100 font-medium">Secretario Proyectista en las Salas Penales del Tribunal Superior de Justicia del Estado de Hidalgo (TSJEH)</strong>.
+                        </p>
+                        <p>
+                            Su labor jurisdiccional comprende el análisis profundo de agravios en segunda instancia, revisión de legalidad de resoluciones de primera instancia, estándares de prueba y salvaguarda de los derechos fundamentales tanto de imputados como de víctimas, destacando por su rigor analítico, apego a la Constitución y actualización constante en criterios jurisprudenciales.
+                        </p>
+                        <p>
+                            Complementa su ejercicio jurisdiccional con la divulgación jurídica a través de ensayos y artículos analíticos especializados en plataformas digitales, orientados a la reflexión crítica sobre los desafíos actuales del derecho penal mexicano.
+                        </p>
+                    </div>
+
+                    <!-- Key stats / Highlights -->
+                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-obsidian-border">
+                        <div>
+                            <span class="block font-serif text-2xl sm:text-3xl font-bold gold-gradient-text">TSJEH</span>
+                            <span class="text-xs text-obsidian-muted uppercase tracking-wider">Salas Penales</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-2xl sm:text-3xl font-bold gold-gradient-text">UAEH</span>
+                            <span class="text-xs text-obsidian-muted uppercase tracking-wider">Maestría</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-2xl sm:text-3xl font-bold gold-gradient-text">PJF</span>
+                            <span class="text-xs text-obsidian-muted uppercase tracking-wider">Especialización</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FORMACIÓN ACADÉMICA (TIMELINE) -->
+    <section id="formacion" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-gold font-semibold mb-2 block">Trayectoria Académica</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-100">Formación y Especialización</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <!-- Timeline Container -->
+            <div class="relative border-l border-obsidian-border ml-4 sm:ml-32 space-y-12">
+                
+                <!-- Item 1 -->
+                <div class="relative pl-8 sm:pl-10 group">
+                    <!-- Dot -->
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gold ring-4 ring-obsidian group-hover:scale-125 transition-transform"></div>
+                    
+                    <!-- Date badge (left on desktop if preferred, or standard timeline) -->
+                    <div class="sm:absolute sm:-left-36 sm:top-1 text-xs font-semibold text-gold tracking-wider uppercase mb-1 sm:mb-0">
+                        Posgrado
+                    </div>
+
+                    <div class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/40 transition-all shadow-lg">
+                        <div class="flex items-center gap-2 text-xs text-obsidian-muted mb-2">
+                            <i class="fa-solid fa-graduation-cap text-gold"></i>
+                            <span>Universidad Autónoma del Estado de Hidalgo (UAEH)</span>
+                        </div>
+                        <h3 class="text-lg font-serif font-bold text-slate-100 mb-2">Maestría en Derecho</h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed">
+                            Estudios avanzados de posgrado con enfoque en dogmática penal, argumentación jurídica y actualización en el sistema procesal acusatorio.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="relative pl-8 sm:pl-10 group">
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gold ring-4 ring-obsidian group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="sm:absolute sm:-left-36 sm:top-1 text-xs font-semibold text-gold tracking-wider uppercase mb-1 sm:mb-0">
+                        Especialización PJF
+                    </div>
+
+                    <div class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/40 transition-all shadow-lg">
+                        <div class="flex items-center gap-2 text-xs text-obsidian-muted mb-2">
+                            <i class="fa-solid fa-building-columns text-gold"></i>
+                            <span>Poder Judicial de la Federación (PJF)</span>
+                        </div>
+                        <h3 class="text-lg font-serif font-bold text-slate-100 mb-2">Curso de Secretario de Juzgado de Distrito</h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed">
+                            Formación especializada en técnicas de redacción judicial, amparo, control de constitucionalidad y convencionalidad en el sistema federal mexicano.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="relative pl-8 sm:pl-10 group">
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gold ring-4 ring-obsidian group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="sm:absolute sm:-left-36 sm:top-1 text-xs font-semibold text-gold tracking-wider uppercase mb-1 sm:mb-0">
+                        Licenciatura
+                    </div>
+
+                    <div class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/40 transition-all shadow-lg">
+                        <div class="flex items-center gap-2 text-xs text-obsidian-muted mb-2">
+                            <i class="fa-solid fa-book-open text-gold"></i>
+                            <span>Licenciatura en Derecho</span>
+                        </div>
+                        <h3 class="text-lg font-serif font-bold text-slate-100 mb-2">Licenciado en Derecho</h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed">
+                            Formación integral en ciencias jurídicas, con especial énfasis en el derecho penal sustantivo y adjetivo, teoría del delito y técnicas de investigación ministerial.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- EXPERIENCIA PROFESIONAL -->
+    <section id="experiencia" class="py-24 bg-obsidian-card/40 border-y border-obsidian-border">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-gold font-semibold mb-2 block">Carrera Jurisdiccional</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-100">Experiencia Profesional</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <div class="bg-obsidian-card border border-gold/30 rounded-2xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-obsidian-border mb-8">
+                    <div>
+                        <span class="inline-block px-3 py-1 rounded-full bg-gold/10 text-gold text-xs font-semibold uppercase tracking-wider mb-3">Actualidad</span>
+                        <h3 class="text-2xl font-serif font-bold text-slate-100">Secretario Proyectista</h3>
+                        <p class="text-gold font-medium text-sm mt-1">Salas Penales del Tribunal Superior de Justicia del Estado de Hidalgo (TSJEH)</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-obsidian-muted bg-obsidian px-4 py-2 rounded-lg border border-obsidian-border self-start md:self-auto">
+                        <i class="fa-solid fa-location-dot text-gold"></i>
+                        <span>Pachuca de Soto, Hidalgo</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-semibold uppercase tracking-wider text-gold flex items-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Funciones Principales
+                        </h4>
+                        <ul class="space-y-3 text-sm text-slate-300 font-light">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Análisis exhaustivo de expedientes y recursos de apelación en materia penal.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Elaboración y proyección de resoluciones colegiadas de segunda instancia.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Estudio riguroso de agravios planteados por las partes bajo el sistema acusatorio.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-semibold uppercase tracking-wider text-gold flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced"></i> Enfoque Técnico
+                        </h4>
+                        <ul class="space-y-3 text-sm text-slate-300 font-light">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Aplicación estricta del estándar de prueba y presunción de inocencia.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Garantía del respeto irrestricto a los derechos humanos y debido proceso.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-chevron-right text-gold text-xs mt-1"></i>
+                                <span>Armonización de criterios jurisprudenciales federales y estatales.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PUBLICACIONES / ARTÍCULOS EN SUBSTACK -->
+    <section id="publicaciones" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-gold font-semibold mb-2 block">Divulgación Jurídica</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-100">Artículos y Ensayos Recientes</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+                <p class="text-sm text-obsidian-muted mt-3">Análisis críticos sobre derecho penal y práctica judicial publicados en Substack.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Article 1 -->
+                <article class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[11px] uppercase tracking-widest text-gold font-semibold px-2.5 py-1 rounded bg-gold/10">Segunda Instancia</span>
+                            <span class="text-xs text-obsidian-muted"><i class="fa-regular fa-calendar mr-1"></i> Reciente</span>
+                        </div>
+                        <h3 class="text-xl font-serif font-bold text-slate-100 group-hover:text-gold transition-colors mb-3">
+                            El Estudio de los Agravios en Segunda Instancia Penal
+                        </h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed mb-6">
+                            Reflexión técnica sobre los límites de la suplencia de la queja, la técnica en la expresión de agravios y el principio de estricto derecho en apelación penal.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-obsidian-border flex items-center justify-between">
+                        <span class="text-xs text-obsidian-muted font-medium">Substack Publication</span>
+                        <a href="#contacto" onclick="showToast('Redirigiendo a artículo completo en Substack...')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold-light transition-colors">
+                            <span>Leer artículo</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[11px] uppercase tracking-widest text-gold font-semibold px-2.5 py-1 rounded bg-gold/10">Teoría de la Prueba</span>
+                            <span class="text-xs text-obsidian-muted"><i class="fa-regular fa-calendar mr-1"></i> Destacado</span>
+                        </div>
+                        <h3 class="text-xl font-serif font-bold text-slate-100 group-hover:text-gold transition-colors mb-3">
+                            El Estándar de Prueba más Allá de toda Duda Razonable
+                        </h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed mb-6">
+                            Análisis dogmático sobre la valoración racional de la prueba en el juicio oral y su control efectivo por parte del tribunal de alzada.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-obsidian-border flex items-center justify-between">
+                        <span class="text-xs text-obsidian-muted font-medium">Substack Publication</span>
+                        <a href="#contacto" onclick="showToast('Redirigiendo a artículo completo en Substack...')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold-light transition-colors">
+                            <span>Leer artículo</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="bg-obsidian-card border border-obsidian-border rounded-xl p-6 hover:border-gold/50 transition-all duration-300 flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[11px] uppercase tracking-widest text-gold font-semibold px-2.5 py-1 rounded bg-gold/10">Sistema Acusatorio</span>
+                            <span class="text-xs text-obsidian-muted"><i class="fa-regular fa-calendar mr-1"></i> Análisis</span>
+                        </div>
+                        <h3 class="text-xl font-serif font-bold text-slate-100 group-hover:text-gold transition-colors mb-3">
+                            Retos Actuales en la Resolución de Recursos Penales
+                        </h3>
+                        <p class="text-sm text-slate-300 font-light leading-relaxed mb-6">
+                            Perspectivas y criterios jurisprudenciales recientes que impactan directamente en la labor diaria del proyectista en las salas penales estatales.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-obsidian-border flex items-center justify-between">
+                        <span class="text-xs text-obsidian-muted font-medium">Substack Publication</span>
+                        <a href="#contacto" onclick="showToast('Redirigiendo a artículo completo en Substack...')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold-light transition-colors">
+                            <span>Leer artículo</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACTO INSTITUCIONAL -->
+    <section id="contacto" class="py-24 bg-obsidian-card/40 border-t border-obsidian-border relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Left info -->
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-xs uppercase tracking-widest text-gold font-semibold block">Comunicación Profesional</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-100">Contacto Institucional</h2>
+                    <p class="text-slate-300 font-light leading-relaxed text-sm">
+                        Para asuntos académicos, ponencias, consultas profesionales o contacto institucional, favor de utilizar el formulario o los datos directos proporcionados.
+                    </p>
+
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-start gap-4 p-4 rounded-xl bg-obsidian-card border border-obsidian-border">
+                            <div class="w-10 h-10 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs uppercase tracking-wider text-obsidian-muted font-semibold">Ubicación</h4>
+                                <p class="text-sm text-slate-200 mt-0.5">Pachuca de Soto, Hidalgo, México</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 rounded-xl bg-obsidian-card border border-obsidian-border">
+                            <div class="w-10 h-10 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs uppercase tracking-wider text-obsidian-muted font-semibold">Institución</h4>
+                                <p class="text-sm text-slate-200 mt-0.5">Tribunal Superior de Justicia del Estado de Hidalgo</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 rounded-xl bg-obsidian-card border border-obsidian-border">
+                            <div class="w-10 h-10 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+                                <i class="fa-regular fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs uppercase tracking-wider text-obsidian-muted font-semibold">Correo Electrónico</h4>
+                                <p class="text-sm text-slate-200 mt-0.5">contacto@hamettadeo.mx</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Form -->
+                <div class="lg:col-span-7">
+                    <div class="bg-obsidian-card border border-obsidian-border rounded-2xl p-8 shadow-2xl">
+                        <h3 class="text-xl font-serif font-bold text-slate-100 mb-6">Envío de Mensaje</h3>
+                        
+                        <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label for="nombre" class="text-xs font-semibold uppercase tracking-wider text-slate-300">Nombre Completo</label>
+                                    <input type="text" id="nombre" required placeholder="Lic. Juan Pérez" class="w-full px-4 py-3 bg-obsidian border border-obsidian-border rounded-lg text-slate-100 text-sm focus:outline-none focus:border-gold transition-colors">
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="email" class="text-xs font-semibold uppercase tracking-wider text-slate-300">Correo Electrónico</label>
+                                    <input type="email" id="email" required placeholder="correo@ejemplo.com" class="w-full px-4 py-3 bg-obsidian border border-obsidian-border rounded-lg text-slate-100 text-sm focus:outline-none focus:border-gold transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="asunto" class="text-xs font-semibold uppercase tracking-wider text-slate-300">Asunto</label>
+                                <input type="text" id="asunto" required placeholder="Asunto del mensaje o consulta" class="w-full px-4 py-3 bg-obsidian border border-obsidian-border rounded-lg text-slate-100 text-sm focus:outline-none focus:border-gold transition-colors">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="mensaje" class="text-xs font-semibold uppercase tracking-wider text-slate-300">Mensaje</label>
+                                <textarea id="mensaje" rows="4" required placeholder="Escriba su mensaje institucional o profesional aquí..." class="w-full px-4 py-3 bg-obsidian border border-obsidian-border rounded-lg text-slate-100 text-sm focus:outline-none focus:border-gold transition-colors resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-gold hover:bg-gold-light text-obsidian font-semibold text-sm uppercase tracking-wider rounded-lg transition-all shadow-lg flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-obsidian border-t border-obsidian-border py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded bg-obsidian-elevated border border-gold/40 flex items-center justify-center">
+                        <span class="font-serif font-bold text-base gold-gradient-text">HT</span>
+                    </div>
+                    <div>
+                        <p class="font-serif font-bold text-slate-200 text-sm">Hamet Tadeo Mendoza López</p>
+                        <p class="text-[11px] text-obsidian-muted">Secretario Proyectista • TSJEH</p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-xs text-obsidian-muted text-center md:text-right">
+                    <p>&copy; 2026 Hamet Tadeo Mendoza López. Todos los derechos reservados.</p>
+                    <p class="mt-1">Pachuca de Soto, Estado de Hidalgo, México.</p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Header shadow on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-xl', 'bg-obsidian/95');
+            } else {
+                header.classList.remove('shadow-xl', 'bg-obsidian/95');
+            }
+        });
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-xl bg-obsidian-card border border-gold/40 shadow-2xl text-slate-100 text-sm transition-all duration-300 translate-y-4 opacity-0`;
+            toast.innerHTML = `
+                <div class="w-7 h-7 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+                    <i class="fa-solid fa-check text-xs"></i>
+                </div>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Contact form simulation
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando mensaje...`;
+
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Mensaje Enviado con Éxito`;
+                btn.classList.remove('bg-gold', 'hover:bg-gold-light');
+                btn.classList.add('bg-emerald-600', 'text-white');
+                
+                showToast('Mensaje enviado correctamente. Nos pondremos en contacto pronto.');
+                document.getElementById('contact-form').reset();
+
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-emerald-600', 'text-white');
+                    btn.classList.add('bg-gold', 'hover:bg-gold-light');
+                }, 3000);
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
