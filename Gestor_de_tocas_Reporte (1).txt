@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGTP - Gestión de Tocas Penales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:#f4f7fc;padding:20px;color:#1e293b}
+        .container{max-width:1200px;margin:0 auto;background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+        h1{color:#0f172a;border-bottom:2px solid #e9eef3;padding-bottom:15px;margin-bottom:20px}
+        h1 i{color:#2563eb;margin-right:10px}
+        h3{color:#2563eb;margin-bottom:15px}
+        h4{color:#1e40af;margin-bottom:10px}
+        .btn{background:#2563eb;color:#fff;border:none;padding:10px 20px;border-radius:25px;cursor:pointer;font-weight:600;margin:5px;font-size:14px;transition:0.2s}
+        .btn:hover{background:#1d4ed8}
+        .btn-outline{background:#fff;color:#2563eb;border:1px solid #2563eb}
+        .btn-outline:hover{background:#eff6ff}
+        .btn-danger{background:#dc2626}.btn-danger:hover{background:#b91c1c}
+        .btn-success{background:#16a34a}.btn-success:hover{background:#15803d}
+        .btn-sm{padding:5px 12px;font-size:12px}
+        .btn-xs{padding:3px 8px;font-size:11px;border-radius:15px}
+        .oculto{display:none!important}
+        table{width:100%;border-collapse:collapse;margin:15px 0}
+        th{background:#f8fafc;padding:10px;text-align:left;font-weight:600;font-size:14px}
+        td{padding:10px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:14px}
+        tr:hover td{background:#f8fafc}
+        .badge{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600}
+        .badge-ok{background:#dcfce7;color:#166534}
+        .badge-warn{background:#fef3c7;color:#92400e}
+        .grid-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin:15px 0}
+        .campo{display:flex;flex-direction:column;gap:5px}
+        .campo label{font-weight:600;font-size:14px;color:#334155}
+        .campo input,.campo select,.campo textarea{padding:10px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;font-family:inherit}
+        .campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.15)}
+        .campo input[readonly]{background:#f1f5f9}
+        .wizard-steps{display:flex;background:#f1f5f9;border-radius:12px;overflow:hidden;margin-bottom:20px}
+        .wizard-step{flex:1;text-align:center;padding:12px 8px;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;transition:0.2s}
+        .wizard-step:hover{background:#e2e8f0}
+        .wizard-step.active{color:#2563eb;background:#fff;border-bottom-color:#2563eb}
+        .wizard-step.completed{color:#16a34a;background:#f0fdf4}
+        .acciones{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+        .check-group{display:flex;flex-wrap:wrap;gap:8px;background:#f1f5f9;padding:12px;border-radius:10px;border:1px solid #cbd5e1}
+        .check-group label{display:flex;align-items:center;gap:6px;background:#fff;padding:6px 10px;border-radius:8px;font-size:13px;font-weight:normal;cursor:pointer}
+        .check-group label:hover{background:#eff6ff}
+        .bloque-oportunidad,.delito-bloque{background:#f8fafc;border-radius:10px;padding:12px;margin-top:8px;border:1px solid #e2e8f0}
+        .bloque-oportunidad{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+        .delito-bloque{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+        .resultado-texto{font-weight:600;font-size:14px}
+        .btn-verificar{background:#e2e8f0;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600}
+        .btn-verificar:hover{background:#cbd5e1}
+        .info-festivos{font-size:12px;color:#64748b;margin-top:5px}
+        hr{margin:20px 0;border:0.5px solid #e2e8f0}
+        .panel-titulo{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+        .panel-titulo i{color:#2563eb}
+        .incidencias-box{background:#f8fafc;border:1px dashed #94a3b8;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;min-height:50px}
+        .resultado-calculo{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;margin-top:8px}
+        .fila-anios{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+        .fila-anios input{width:65px;padding:6px;text-align:center}
+        .fila-anios span{font-size:12px;color:#64748b}
+        .reproche-linea{position:relative;height:50px;background:linear-gradient(to right,#22c55e,#eab308,#ef4444);border-radius:25px;margin:8px 0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px}
+        .reproche-punto{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #1e293b;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#1e293b;z-index:2}
+        .reproche-punto:hover{transform:scale(1.3);border-color:#2563eb}
+        .reproche-punto.seleccionado{background:#2563eb;color:#fff;border-color:#1e40af;transform:scale(1.3);box-shadow:0 0 12px rgba(37,99,235,0.5)}
+        .reproche-etiquetas{display:flex;justify-content:space-between;font-size:9px;color:#475569;padding:0 6px}
+        .reporte-preview{background:#fafafa;border:1px solid #e2e8f0;border-radius:10px;padding:20px;max-height:450px;overflow-y:auto;font-size:13px;line-height:1.6;margin-bottom:20px}
+        .reporte-preview h3{color:#2563eb;margin:15px 0 5px}
+        .reporte-preview table{width:100%;border-collapse:collapse;margin:8px 0}
+        .reporte-preview td{padding:6px 10px;border:1px solid #ddd}
+        .reporte-preview .td-label{font-weight:600;background:#f8fafc;width:40%}
+        .reporte-preview th{background:#f8fafc;text-align:left;padding:6px 10px;font-weight:600}
+    </style>
+</head>
+<body>
+    <div class="container" id="vistaLista">
+      <h1><i class="fas fa-scale-balanced"></i>SGTP - Gestión de Tocas Penales</h1>
+<p style="font-size:0.85rem;color:#64748b;margin-top:-15px;margin-bottom:20px;margin-left:8px">Secretario: Hamet Tadeo Mendoza López</p>
+        <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <button class="btn" onclick="nuevoToca()"><i class="fas fa-plus"></i> Nuevo Toca</button>
+                <button class="btn btn-outline btn-sm" onclick="importarJSON()"><i class="fas fa-upload"></i> Cargar JSON</button>
+            </div>
+            <span style="color:#64748b;font-size:14px" id="contadorTocas">0 tocas</span>
+        </div>
+        <div id="listaTocasContainer"><p style="text-align:center;color:#94a3b8;padding:40px">No hay tocas registrados.</p></div>
+    </div>
+
+    <div class="container oculto" id="vistaFormulario">
+        <h1><i class="fas fa-edit"></i> <span id="tituloFormulario">Nuevo Toca</span></h1>
+        <div class="wizard-steps">
+            <div class="wizard-step active" onclick="irPaso(1)">1. Datos</div>
+            <div class="wizard-step" onclick="irPaso(2)">2. Apelantes</div>
+            <div class="wizard-step" onclick="irPaso(3)">3. Incidencias</div>
+            <div class="wizard-step" onclick="irPaso(4)">4. Penas</div>
+            <div class="wizard-step" onclick="irPaso(5)">5. Reparación</div>
+            <div class="wizard-step" onclick="irPaso(6)">6. Reporte</div>
+        </div>
+        <form onsubmit="return false">
+            <!-- PANEL 1: DATOS MAESTROS -->
+            <div id="panel1">
+                <h3><i class="fas fa-folder-open"></i> Datos Maestros</h3>
+                <div class="grid-form">
+                    <div class="campo"><label>Toca</label><input type="text" id="toca"></div>
+                    <div class="campo"><label>Sala</label><select id="sala"><option value="">Selecciona</option><option value="Unitaria">Unitaria</option><option value="Colegiada">Colegiada</option></select></div>
+                    <div class="campo"><label>Acto impugnado</label><input type="text" id="actoImpugnado"></div>
+                    <div class="campo"><label>Fecha acto</label><input type="date" id="fechaActo"></div>
+                    <div class="campo"><label>Delito(s)</label><div id="listaDelitosDatos"></div><button type="button" class="btn btn-outline btn-sm" onclick="agregarDelitoDatos()" style="margin-top:5px"><i class="fas fa-plus"></i> Agregar delito</button></div>
+                    
+<div class="campo"><label>Procedencia</label><select id="distrito"><option value="">Elige</option><option value="I. Actopan">I. Actopan</option><option value="II. Apan">II. Apan</option><option value="III. Atotonilco el Grande">III. Atotonilco el Grande</option><option value="IV. Huejutla de Reyes">IV. Huejutla de Reyes</option><option value="V. Huichapan">V. Huichapan</option><option value="VI. Ixmiquilpan">VI. Ixmiquilpan</option><option value="VIII. Metztitlán">VIII. Metztitlán</option><option value="IX. Molango de Escamilla">IX. Molango de Escamilla</option><option value="X. Mixquiahuala de Juárez">X. Mixquiahuala de Juárez</option><option value="XI. Pachuca de Soto">XI. Pachuca de Soto</option><option value="XII. Tenango de Doria">XII. Tenango de Doria</option><option value="XIII. Tizayuca">XIII. Tizayuca</option><option value="XIV. Tula de Allende">XIV. Tula de Allende</option><option value="XV. Tulancingo de Bravo">XV. Tulancingo de Bravo</option><option value="XVI. Zacualtipán de Ángeles">XVI. Zacualtipán de Ángeles</option><option value="XVII. Zimapán de Zavala">XVII. Zimapán de Zavala</option></select></div>
+                    <div class="campo"><label>Circuito</label><input type="text" id="circuito" readonly></div>
+                    <div class="campo"><label>Turno</label><input type="date" id="turno"></div>
+                    <div class="campo"><label>Volumen (discos)</label><select id="volumenDiscos"><option value="">--</option></select></div>
+                </div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="cancelarFormulario()"><i class="fas fa-times"></i> Cancelar</button><button type="button" class="btn" onclick="irPaso(2)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            </div>
+
+            <!-- PANEL 2: APELANTES Y OPORTUNIDAD -->
+            <div id="panel2" class="oculto">
+                <h3><i class="fas fa-users"></i> Apelantes y Oportunidad</h3>
+                <div class="grid-form">
+                    <div class="campo"><label>Apelantes principales</label><div class="check-group" id="checkPrincipales"><label><input type="checkbox" class="apelante-principal" value="Parte sentenciada"> Parte sent.</label><label><input type="checkbox" class="apelante-principal" value="Defensa particular"> Def. particular</label><label><input type="checkbox" class="apelante-principal" value="Defensa pública"> Def. pública</label><label><input type="checkbox" class="apelante-principal" value="Parte victimal"> Víctima</label><label><input type="checkbox" class="apelante-principal" value="Ministerio Público"> MP</label><label><input type="checkbox" class="apelante-principal" value="Asesoría jurídica"> Asesoría jur.</label><label><input type="checkbox" class="apelante-principal" value="Representante coadyuvante"> Coadyuvante</label><label><input type="checkbox" class="apelante-principal" value="Representante en suplencia"> Suplencia</label></div></div>
+                    <div class="campo"><label>¿Adhesivos?</label><select id="hayAdhesivos"><option value="no">No</option><option value="si">Sí</option></select><div id="panelAdhesivos" class="oculto" style="margin-top:8px"><div class="check-group" id="checkAdhesivos"><label><input type="checkbox" class="adhesivo-check" value="Parte sentenciada"> Parte sent.</label><label><input type="checkbox" class="adhesivo-check" value="Defensa particular"> Def. particular</label><label><input type="checkbox" class="adhesivo-check" value="Defensa pública"> Def. pública</label><label><input type="checkbox" class="adhesivo-check" value="Parte victimal"> Víctima</label><label><input type="checkbox" class="adhesivo-check" value="Ministerio Público"> MP</label><label><input type="checkbox" class="adhesivo-check" value="Asesoría jurídica"> Asesoría</label><label><input type="checkbox" class="adhesivo-check" value="Representante coadyuvante"> Coadyuvante</label><label><input type="checkbox" class="adhesivo-check" value="Representante en suplencia"> Suplencia</label></div></div></div>
+                </div>
+                <hr><div class="panel-titulo"><i class="fas fa-clock"></i> <strong>Oportunidad</strong></div>
+                <div class="info-festivos"><i class="fas fa-info-circle"></i> Sin sáb, dom ni festivos.</div>
+                <div style="display:flex;gap:15px;flex-wrap:wrap;align-items:center;margin:10px 0"><div class="campo"><label>Fecha notif./audiencia</label><input type="date" id="fechaNotificacion"></div><div class="campo"><label>Tipo de resolución</label><select id="tipoResolucion"><option value="">-- Tipo --</option><option value="auto">Auto (3 d)</option><option value="abreviado">Abreviado (5 d)</option><option value="juicioOral">Juicio Oral (10 d)</option></select></div></div>
+                <div id="panelOportunidadPrincipales"></div><div id="panelOportunidadAdhesivos" style="margin-top:10px"></div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="irPaso(1)"><i class="fas fa-arrow-left"></i> Atrás</button><button type="button" class="btn" onclick="irPaso(3)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            </div>
+
+            <!-- PANEL 3: INCIDENCIAS -->
+            <div id="panel3" class="oculto">
+                <h3><i class="fas fa-clipboard-list"></i> Incidencias y Constancias</h3>
+                <div class="grid-form">
+                    <div class="campo"><label>¿Detenido?</label><select id="detenidoSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelDetenidoSi" class="oculto" style="margin-top:8px"><input type="date" id="fechaDetencion" style="margin-bottom:5px"><select id="tipoPrision"><option value="oficiosa">Oficiosa</option><option value="justificada">Justificada</option></select></div><div id="panelMedidasCautelares" style="margin-top:8px"><input type="text" id="medidasCautelares" placeholder="Medidas cautelares"></div></div>
+                    <div class="campo"><label>¿Audiencia 2ª inst.?</label><select id="audienciaSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelAudiencia" class="oculto" style="margin-top:8px"><select id="solicitanteAudiencia"><option value="">-- Quién --</option><option value="Parte sentenciada">Parte sentenciada</option><option value="Defensa">Defensa</option><option value="Ministerio Público">MP</option><option value="Parte victimal">Víctima</option></select></div></div>
+                    <div class="campo"><label>Admisión recurso</label><input type="date" id="admisionRecurso"></div>
+                    <div class="campo"><label>Vencimiento</label><input type="text" id="vencimiento" readonly></div>
+                    <div class="campo"><label>¿Discos completos?</label><select id="discosCompletos"><option value="si">Sí</option><option value="no">No</option></select><div id="panelDiscosNo" class="oculto" style="margin-top:8px"><input type="text" id="razonDiscos" placeholder="Explica"></div></div>
+                    <div class="campo"><label>¿Agravios completos?</label><select id="agraviosCompletos"><option value="si">Sí</option><option value="no">No</option></select><div id="panelAgraviosNo" class="oculto" style="margin-top:8px"><input type="text" id="razonAgravios" placeholder="Explica"></div></div>
+                    <div class="campo"><label>¿Violaciones?</label><select id="violacionesSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelViolaciones" class="oculto" style="margin-top:8px"><input type="text" id="tipoViolacion" placeholder="Tipo" style="margin-bottom:5px"><input type="text" id="parteViolacion" placeholder="Parte"></div></div>
+                    <div class="campo"><label>¿Relacionado?</label><select id="relacionadoSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelRelacionado" class="oculto" style="margin-top:8px"><input type="text" id="tocaRelacionado" placeholder="Número" style="margin-bottom:5px"><input type="text" id="detalleRelacion" placeholder="Detalles"></div></div>
+                    <div class="campo"><label>¿Excusa?</label><select id="excusaSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelExcusa" class="oculto" style="margin-top:8px"><input type="text" id="magistradoExcusado" placeholder="Nombre"></div></div>
+                </div>
+                <div style="margin-top:20px"><div class="panel-titulo"><i class="fas fa-clipboard-list"></i> <strong>Incidencias</strong></div><div id="resumenIncidencias" class="incidencias-box">✅ Sin incidencias.</div><div style="margin-top:10px"><label>Otra:</label><input type="text" id="otraIncidencia" placeholder="Describe" style="width:100%;margin-top:5px"></div></div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="irPaso(2)"><i class="fas fa-arrow-left"></i> Atrás</button><button type="button" class="btn" onclick="irPaso(4)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            </div>
+
+            <!-- PANEL 4: INDIVIDUALIZACIÓN DE PENAS -->
+            <div id="panel4" class="oculto">
+                <h3><i class="fas fa-calculator"></i> Individualización de Penas</h3>
+                <div class="campo" style="margin-bottom:15px"><label>¿Aplica individualización?</label><select id="aplicaIndividualizacion"><option value="si">Sí</option><option value="no">No</option></select></div>
+                <div id="contenidoIndividualizacion">
+                    <div id="contenedorDelitosInd"></div>
+                    <div style="margin-top:15px"><label><strong>Fecha de los hechos:</strong></label><input type="date" id="fechaHechos" style="margin-left:10px"></div>
+                    <div id="resumenPenas" style="margin-top:15px"></div>
+                    <div class="campo" style="margin-top:20px"><label>¿Conmutación?</label><select id="conmutacionSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelConmutacion" class="oculto" style="margin-top:10px"><div style="display:flex;gap:15px;flex-wrap:wrap"><div class="campo"><label>Fecha detención</label><input type="date" id="fechaDetencionConmutacion"></div><div class="campo"><label>Fecha resolución</label><input type="date" id="fechaResolucionConmutacion"></div></div><div id="resultadoConmutacion" class="resultado-calculo" style="display:none;margin-top:10px"></div></div></div>
+                    <div style="margin-top:20px"><div class="panel-titulo"><i class="fas fa-list-check"></i> <strong>Penas accesorias</strong></div></div>
+                    <div class="grid-form"><div class="campo"><label><input type="checkbox" id="suspensionDerechos"> Suspensión de derechos</label></div><div class="campo"><label><input type="checkbox" id="amonestacion"> Amonestación</label></div><div class="campo"><label>¿Otras penas?</label><select id="otrasPenasSelect"><option value="no">No</option><option value="si">Sí</option></select><div id="panelOtrasPenas" class="oculto" style="margin-top:8px"><input type="text" id="otrasPenasTexto" placeholder="Ej. Pérdida de patria potestad..."></div></div></div>
+                </div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="irPaso(3)"><i class="fas fa-arrow-left"></i> Atrás</button><button type="button" class="btn" onclick="irPaso(5)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            </div>
+
+            <!-- PANEL 5: REPARACIÓN DEL DAÑO -->
+            <div id="panel5" class="oculto">
+                <h3><i class="fas fa-hand-holding-heart"></i> Reparación del Daño</h3>
+                <div class="campo" style="margin-bottom:15px"><label>¿Aplica reparación del daño?</label><select id="aplicaReparacion"><option value="si">Sí</option><option value="no">No</option></select></div>
+                <div id="contenidoReparacion">
+                    <div class="grid-form">
+                        <div class="campo"><label>¿Pendiente para ejecución?</label><select id="reparacionPendiente"><option value="si">Sí</option><option value="no">No</option></select></div>
+                        <div id="panelReparacionNo" class="oculto" style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+                            <div class="campo"><label>Cuantificación daños</label><input type="text" id="cuantificacionDanos" placeholder="Ej. $50,000.00"></div>
+                            <div class="campo"><label>Cuantificación perjuicios</label><input type="text" id="cuantificacionPerjuicios" placeholder="Ej. $20,000.00"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px"><div class="panel-titulo"><i class="fas fa-clipboard-check"></i> <strong>Otras medidas impuestas</strong></div></div>
+                    <div class="check-group" style="margin-top:8px">
+                        <label><input type="checkbox" class="medida-impuesta" value="Atención psicológica"> Atención psicológica</label>
+                        <label><input type="checkbox" class="medida-impuesta" value="Pago honorarios asesoría jurídica"> Pago honorarios</label>
+                        <label><input type="checkbox" class="medida-impuesta" value="Disculpa pública"> Disculpa pública</label>
+                        <label><input type="checkbox" class="medida-impuesta" value="Medidas de no repetición"> Medidas de no repetición</label>
+                    </div>
+                    <div style="margin-top:10px"><label>Otra medida (manual):</label><input type="text" id="otraMedidaManual" placeholder="Especifica otra medida" style="width:100%;margin-top:5px"></div>
+                </div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="irPaso(4)"><i class="fas fa-arrow-left"></i> Atrás</button><button type="button" class="btn" onclick="irPaso(6)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            </div>
+
+            <!-- PANEL 6: REPORTE FINAL -->
+            <div id="panel6" class="oculto">
+                <h3><i class="fas fa-file-alt"></i> Reporte Final</h3>
+                <div class="reporte-preview" id="reportePreview"></div>
+                <div style="text-align:center;padding:10px">
+                    <i class="fas fa-check-circle" style="font-size:2.5rem;color:#16a34a;margin-bottom:8px"></i>
+                    <p style="color:#64748b;margin-bottom:15px">Revisa el reporte. Puedes descargarlo o guardar.</p>
+                    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+                        <button type="button" class="btn btn-success" onclick="guardarToca()"><i class="fas fa-save"></i> Guardar</button>
+                        <button type="button" class="btn" onclick="descargarDOCX()"><i class="fas fa-file-word"></i> Word</button>
+                        <button type="button" class="btn btn-outline" onclick="descargarPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                </div>
+                <div class="acciones"><button type="button" class="btn btn-outline" onclick="irPaso(5)"><i class="fas fa-arrow-left"></i> Atrás</button><button type="button" class="btn btn-outline" onclick="cancelarFormulario()"><i class="fas fa-list"></i> Ir a lista</button></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ============ DATOS GLOBALES ============
+        let listaTocas=[],tocaActualId=null,idDelitoDatosContador=0,delitosConcurso=[],idDelitoContador=0;
+        const festivosFijos=['02-02','03-16','04-02','04-03','05-01','09-16','11-02','11-16'];
+        const rangosInhabiles=[{inicio:'2026-07-16',fin:'2026-07-31'},{inicio:'2026-12-17',fin:'2027-01-08'}];
+        const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+        const nombresReproche=['Mínimo','Eq mín-med (cercano a mín)','Eq entre mín y med','Eq mín-med (cercano a med)','Medio','Eq entre med y máx','Eq med-máx (cercano a med)','Eq med-máx (cercano a máx)','Máximo'];
+        const mapaCircuitos={
+    'XI. Pachuca de Soto':'Primer circuito (Pachuca)',
+    'XIII. Tizayuca':'Primer circuito (Pachuca)',
+    'XV. Tulancingo de Bravo':'Segundo circuito (Tulancingo)',
+    'II. Apan':'Segundo circuito (Tulancingo)',
+    'III. Atotonilco el Grande':'Segundo circuito (Tulancingo)',
+    'XII. Tenango de Doria':'Segundo circuito (Tulancingo)',
+    'XIV. Tula de Allende':'Tercer circuito (Tula)',
+    'I. Actopan':'Tercer circuito (Tula)',
+    'X. Mixquiahuala de Juárez':'Tercer circuito (Tula)',
+    'VI. Ixmiquilpan':'Cuarto circuito (Ixmiquilpan)',
+    'XVII. Zimapán de Zavala':'Cuarto circuito (Ixmiquilpan)',
+    'V. Huichapan':'Cuarto circuito (Ixmiquilpan)',
+    'IV. Huejutla de Reyes':'Quinto circuito (Huejutla)',
+    'XVI. Zacualtipán de Ángeles':'Quinto circuito (Huejutla)',
+    'VIII. Metztitlán':'Quinto circuito (Huejutla)',
+    'IX. Molango de Escamilla':'Quinto circuito (Huejutla)'
+};
+
+
+        function esFestivoOHabil(f){let d=f.getDay();if(d===0||d===6)return false;let m=String(f.getMonth()+1).padStart(2,'0'),dd=String(f.getDate()).padStart(2,'0');if(festivosFijos.includes(m+'-'+dd))return false;let fs=f.toISOString().slice(0,10);for(let r of rangosInhabiles){if(fs>=r.inicio&&fs<=r.fin)return false;}return true;}
+        function sumarDiasHabiles(b,d){let f=new Date(b),c=0;while(c<d){f.setDate(f.getDate()+1);if(esFestivoOHabil(f))c++;}return f;}
+        function fechaLegible(iso){if(!iso)return'—';let d=new Date(iso+'T00:00:00');if(isNaN(d.getTime()))return'—';return d.getDate()+' de '+meses[d.getMonth()]+' de '+d.getFullYear();}
+        function fmtMoneda(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+
+        function init(){
+            const sv=document.getElementById('volumenDiscos');for(let i=1;i<=30;i++){let o=document.createElement('option');o.value=i;o.textContent=i+' discos';sv.appendChild(o);}let om=document.createElement('option');om.value='+30';om.textContent='+30 discos';sv.appendChild(om);
+            document.getElementById('distrito').addEventListener('change',function(){document.getElementById('circuito').value=mapaCircuitos[this.value]||'';});
+            document.getElementById('turno').addEventListener('change',function(){if(this.value){let f=new Date(this.value+'T00:00:00');f.setMonth(f.getMonth()+3);document.getElementById('vencimiento').value=f.toISOString().slice(0,10);}else document.getElementById('vencimiento').value='';});
+            document.getElementById('hayAdhesivos').addEventListener('change',function(){document.getElementById('panelAdhesivos').classList.toggle('oculto',this.value!=='si');actualizarPanelesOportunidad();});
+            document.getElementById('detenidoSelect').addEventListener('change',function(){document.getElementById('panelDetenidoSi').classList.toggle('oculto',this.value!=='si');document.getElementById('panelMedidasCautelares').classList.toggle('oculto',this.value==='si');});
+            document.getElementById('audienciaSelect').addEventListener('change',function(){document.getElementById('panelAudiencia').classList.toggle('oculto',this.value!=='si');});
+            document.getElementById('discosCompletos').addEventListener('change',function(){document.getElementById('panelDiscosNo').classList.toggle('oculto',this.value!=='no');actualizarResumenIncidencias();});
+            document.getElementById('agraviosCompletos').addEventListener('change',function(){document.getElementById('panelAgraviosNo').classList.toggle('oculto',this.value!=='no');actualizarResumenIncidencias();});
+            document.getElementById('violacionesSelect').addEventListener('change',function(){document.getElementById('panelViolaciones').classList.toggle('oculto',this.value!=='si');actualizarResumenIncidencias();});
+            document.getElementById('relacionadoSelect').addEventListener('change',function(){document.getElementById('panelRelacionado').classList.toggle('oculto',this.value!=='si');actualizarResumenIncidencias();});
+            document.getElementById('excusaSelect').addEventListener('change',function(){document.getElementById('panelExcusa').classList.toggle('oculto',this.value!=='si');actualizarResumenIncidencias();});
+            document.getElementById('aplicaIndividualizacion').addEventListener('change',function(){document.getElementById('contenidoIndividualizacion').classList.toggle('oculto',this.value==='no');if(this.value==='si')cargarDelitosEnIndividualizacion();});
+            document.getElementById('conmutacionSelect').addEventListener('change',function(){document.getElementById('panelConmutacion').classList.toggle('oculto',this.value!=='si');if(this.value==='si')actualizarFechasConmutacion();});
+            document.getElementById('otrasPenasSelect').addEventListener('change',function(){document.getElementById('panelOtrasPenas').classList.toggle('oculto',this.value!=='si');});
+            document.getElementById('aplicaReparacion').addEventListener('change',function(){document.getElementById('contenidoReparacion').classList.toggle('oculto',this.value==='no');});
+            document.getElementById('reparacionPendiente').addEventListener('change',function(){document.getElementById('panelReparacionNo').classList.toggle('oculto',this.value==='si');});
+            document.getElementById('fechaHechos').addEventListener('change',actualizarResumenPenas);
+            document.getElementById('fechaDetencionConmutacion').addEventListener('change',actualizarConmutacion);
+            document.getElementById('fechaResolucionConmutacion').addEventListener('change',actualizarConmutacion);
+            document.querySelectorAll('.apelante-principal,.adhesivo-check').forEach(cb=>cb.addEventListener('change',actualizarPanelesOportunidad));
+            ['razonDiscos','razonAgravios','tipoViolacion','parteViolacion','tocaRelacionado','detalleRelacion','magistradoExcusado','otraIncidencia'].forEach(id=>{let el=document.getElementById(id);if(el){el.addEventListener('change',actualizarResumenIncidencias);el.addEventListener('input',actualizarResumenIncidencias);}});
+            cargarListaStorage();renderizarLista();mostrarLista();
+        }
+
+        function actualizarResumenIncidencias(){let inc=[];if(document.getElementById('discosCompletos').value==='no')inc.push('⚠️ Discos incompletos: '+(document.getElementById('razonDiscos').value||'sin explicación'));if(document.getElementById('agraviosCompletos').value==='no')inc.push('⚠️ Agravios incompletos: '+(document.getElementById('razonAgravios').value||'sin explicación'));if(document.getElementById('violacionesSelect').value==='si')inc.push('🚨 Violación: '+(document.getElementById('tipoViolacion').value||'?')+' ('+(document.getElementById('parteViolacion').value||'?')+')');if(document.getElementById('relacionadoSelect').value==='si')inc.push('🔗 Relacionado con '+(document.getElementById('tocaRelacionado').value||'?'));if(document.getElementById('excusaSelect').value==='si')inc.push('👤 Excusa: '+(document.getElementById('magistradoExcusado').value||'?'));let otra=document.getElementById('otraIncidencia').value.trim();if(otra)inc.push('📌 '+otra);document.getElementById('resumenIncidencias').innerHTML=inc.length?inc.map(i=>'<div>'+i+'</div>').join(''):'✅ Sin incidencias.';}
+
+        function actualizarPanelesOportunidad(){let pp=document.getElementById('panelOportunidadPrincipales'),pa=document.getElementById('panelOportunidadAdhesivos');let sel=Array.from(document.querySelectorAll('.apelante-principal:checked')).map(c=>c.value);pp.innerHTML=sel.length?'<div class="panel-titulo" style="margin-top:10px">📌 Apelantes principales</div>':'';sel.forEach(n=>{let d=document.createElement('div');d.className='bloque-oportunidad';d.innerHTML=`<strong>${n}</strong><input type="date" class="fecha-interposicion" data-tipo="principal" data-nombre="${n}" placeholder="Fecha interposición"><button type="button" class="btn-verificar btn-verificar-individual">Verificar</button><span class="resultado-texto"></span>`;pp.appendChild(d);});pa.innerHTML='';if(document.getElementById('hayAdhesivos').value==='si'){let adh=Array.from(document.querySelectorAll('.adhesivo-check:checked')).map(c=>c.value);if(adh.length)pa.innerHTML='<hr><div class="panel-titulo">📎 Adhesivos (traslado + 3 d)</div>';adh.forEach(n=>{let d=document.createElement('div');d.className='bloque-oportunidad';d.innerHTML=`<strong>${n}</strong><input type="date" class="fecha-traslado-adhesivo" data-nombre="${n}" placeholder="Fecha traslado"><input type="date" class="fecha-interposicion-adhesivo" data-tipo="adhesivo" data-nombre="${n}" placeholder="Fecha interposición"><button type="button" class="btn-verificar btn-verificar-adhesivo">Verificar</button><span class="resultado-texto"></span>`;pa.appendChild(d);});}document.querySelectorAll('.btn-verificar-individual').forEach(b=>b.addEventListener('click',verificarPrincipal));document.querySelectorAll('.btn-verificar-adhesivo').forEach(b=>b.addEventListener('click',verificarAdhesivo));}
+        function verificarPrincipal(e){e.preventDefault();let c=e.target.closest('.bloque-oportunidad'),inp=c.querySelector('.fecha-interposicion'),sp=c.querySelector('.resultado-texto'),fn=document.getElementById('fechaNotificacion').value,tr=document.getElementById('tipoResolucion').value;if(!fn||!tr||!inp.value){alert('Completa todos los campos.');return;}let dias=tr==='auto'?3:(tr==='abreviado'?5:10),ini=new Date(fn+'T00:00:00');ini.setDate(ini.getDate()+1);while(!esFestivoOHabil(ini))ini.setDate(ini.getDate()+1);let lim=sumarDiasHabiles(ini,dias-1),ok=new Date(inp.value+'T00:00:00')<=lim;sp.textContent=ok?'✅ EN TIEMPO':'❌ EXTEMPORÁNEO';sp.style.color=ok?'#166534':'#991b1b';}
+        function verificarAdhesivo(e){e.preventDefault();let c=e.target.closest('.bloque-oportunidad'),t=c.querySelector('.fecha-traslado-adhesivo').value,i=c.querySelector('.fecha-interposicion-adhesivo').value;if(!t||!i){alert('Completa traslado e interposición.');return;}let ini=new Date(t+'T00:00:00');ini.setDate(ini.getDate()+1);while(!esFestivoOHabil(ini))ini.setDate(ini.getDate()+1);let lim=sumarDiasHabiles(ini,2),ok=new Date(i+'T00:00:00')<=lim,sp=c.querySelector('.resultado-texto');sp.textContent=ok?'✅ EN TIEMPO':'❌ EXTEMPORÁNEO';sp.style.color=ok?'#166534':'#991b1b';}
+
+        function crearDelitoInd(id,nombrePre=''){let div=document.createElement('div');div.className='delito-bloque';div.id='delito-'+id;div.style.cssText='flex-direction:column;align-items:stretch';div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong style="color:#2563eb;">${nombrePre||'Delito #'+id}</strong><button type="button" class="btn btn-danger btn-xs" onclick="eliminarDelitoInd(${id})"><i class="fas fa-trash"></i></button></div><div class="grid-form"><div class="campo"><label>Pena mínima prisión</label><div class="fila-anios"><input type="number" class="pminp-a" placeholder="Años" min="0"><span>a</span><input type="number" class="pminp-m" placeholder="Meses" min="0" max="11"><span>m</span><input type="number" class="pminp-d" placeholder="Días" min="0" max="29"><span>d</span></div></div><div class="campo"><label>Pena máxima prisión</label><div class="fila-anios"><input type="number" class="pmaxp-a" placeholder="Años" min="0"><span>a</span><input type="number" class="pmaxp-m" placeholder="Meses" min="0" max="11"><span>m</span><input type="number" class="pmaxp-d" placeholder="Días" min="0" max="29"><span>d</span></div></div><div class="campo"><label>Pena mínima multa (días)</label><input type="number" class="pminm" step="0.01" placeholder="0"></div><div class="campo"><label>Pena máxima multa (días)</label><input type="number" class="pmaxm" step="0.01" placeholder="0"></div></div><div style="margin-top:10px"><label style="font-weight:600">Grado de reproche</label><div class="reproche-linea" id="linea-${id}"><div class="reproche-punto" data-i="0" data-id="${id}">M</div><div class="reproche-punto" data-i="1" data-id="${id}">◐</div><div class="reproche-punto" data-i="2" data-id="${id}">◑</div><div class="reproche-punto" data-i="3" data-id="${id}">◐</div><div class="reproche-punto" data-i="4" data-id="${id}">M</div><div class="reproche-punto" data-i="5" data-id="${id}">◑</div><div class="reproche-punto" data-i="6" data-id="${id}">◐</div><div class="reproche-punto" data-i="7" data-id="${id}">◑</div><div class="reproche-punto" data-i="8" data-id="${id}">M</div></div><div class="reproche-etiquetas"><span>Mín</span><span></span><span></span><span></span><span>Med</span><span></span><span></span><span></span><span>Máx</span></div><input type="hidden" id="reproche-${id}" value="-1"><div style="text-align:center;font-weight:600;color:#2563eb;margin-top:5px" id="texto-reproche-${id}">Selecciona un punto</div></div><div class="resultado-calculo" id="resultado-${id}" style="display:none"></div>`;document.getElementById('contenedorDelitosInd').appendChild(div);div.querySelectorAll('.reproche-punto').forEach(p=>{p.addEventListener('click',function(){let idD=this.dataset.id,idx=parseInt(this.dataset.i);document.getElementById('reproche-'+idD).value=idx;div.querySelectorAll('.reproche-punto').forEach(pp=>pp.classList.remove('seleccionado'));this.classList.add('seleccionado');document.getElementById('texto-reproche-'+idD).textContent=nombresReproche[idx];calcularPena(idD);});});div.querySelectorAll('input[type="number"]').forEach(inp=>inp.addEventListener('input',function(){calcularPena(id);}));}
+        function calcularPena(id){let bl=document.getElementById('delito-'+id);if(!bl)return;let idx=parseInt(document.getElementById('reproche-'+id).value);if(idx<0){document.getElementById('resultado-'+id).style.display='none';return;}let pMinP=(parseInt(bl.querySelector('.pminp-a').value)||0)*360+(parseInt(bl.querySelector('.pminp-m').value)||0)*30+(parseInt(bl.querySelector('.pminp-d').value)||0);let pMaxP=(parseInt(bl.querySelector('.pmaxp-a').value)||0)*360+(parseInt(bl.querySelector('.pmaxp-m').value)||0)*30+(parseInt(bl.querySelector('.pmaxp-d').value)||0);let pMinM=parseFloat(bl.querySelector('.pminm').value)||0,pMaxM=parseFloat(bl.querySelector('.pmaxm').value)||0;let medP=(pMinP+pMaxP)/2,medM=(pMinM+pMaxM)/2,eqMinMedP=(pMinP+medP)/2,eqMinMedM=(pMinM+medM)/2,eqMedMaxP=(medP+pMaxP)/2,eqMedMaxM=(medM+pMaxM)/2;let pr,mu;switch(idx){case 0:pr=pMinP;mu=pMinM;break;case 1:pr=(pMinP+eqMinMedP)/2;mu=(pMinM+eqMinMedM)/2;break;case 2:pr=eqMinMedP;mu=eqMinMedM;break;case 3:pr=(eqMinMedP+medP)/2;mu=(eqMinMedM+medM)/2;break;case 4:pr=medP;mu=medM;break;case 5:pr=eqMedMaxP;mu=eqMedMaxM;break;case 6:pr=(medP+eqMedMaxP)/2;mu=(medM+eqMedMaxM)/2;break;case 7:pr=(eqMedMaxP+pMaxP)/2;mu=(eqMedMaxM+pMaxM)/2;break;case 8:pr=pMaxP;mu=pMaxM;break;default:pr=0;mu=0;}let dt=Math.floor(pr),an=Math.floor(dt/360),re=dt%360,me=Math.floor(re/30),di=re%30,md=Math.floor(mu);document.getElementById('resultado-'+id).style.display='block';document.getElementById('resultado-'+id).innerHTML=`<strong>📊 Prisión:</strong> ${an}a ${me}m ${di}d (${dt} días) | <strong>Multa:</strong> ${md} días`;actualizarResumenPenas();}
+        function eliminarDelitoInd(id){if(!confirm('¿Eliminar?'))return;document.getElementById('delito-'+id).remove();delitosConcurso=delitosConcurso.filter(d=>d!==id);actualizarResumenPenas();actualizarBotonOtroDelito();}
+        function agregarDelitoInd(){idDelitoContador++;delitosConcurso.push(idDelitoContador);crearDelitoInd(idDelitoContador);actualizarBotonOtroDelito();}
+        function actualizarBotonOtroDelito(){let ex=document.getElementById('btnOtroDelito');if(ex)ex.remove();let btn=document.createElement('button');btn.type='button';btn.className='btn btn-outline btn-sm';btn.id='btnOtroDelito';btn.innerHTML='<i class="fas fa-plus"></i> Agregar otro delito';btn.onclick=agregarDelitoInd;document.getElementById('contenedorDelitosInd').appendChild(btn);}
+        function cargarDelitosEnIndividualizacion(){document.getElementById('contenedorDelitosInd').innerHTML='';delitosConcurso=[];idDelitoContador=0;let nombres=Array.from(document.querySelectorAll('#listaDelitosDatos input')).map(i=>i.value.trim()).filter(n=>n);if(!nombres.length){agregarDelitoInd();return;}nombres.forEach(n=>{idDelitoContador++;delitosConcurso.push(idDelitoContador);crearDelitoInd(idDelitoContador,n);});actualizarBotonOtroDelito();}
+        function actualizarResumenPenas(){let rd=document.getElementById('resumenPenas');let tp=0,tm=0,det=[];document.querySelectorAll('#contenedorDelitosInd .delito-bloque').forEach(bl=>{let id=bl.id.replace('delito-',''),rdiv=document.getElementById('resultado-'+id);if(rdiv&&rdiv.style.display!=='none'){let t=rdiv.textContent,matchP=t.match(/(\d+)\s*días/),matchM=t.match(/Multa:\s*(\d+)/);if(matchP)tp+=parseInt(matchP[1]);if(matchM)tm+=parseInt(matchM[1]);det.push(id);}});if(!det.length){rd.innerHTML='';return;}let an=Math.floor(tp/360),re=tp%360,me=Math.floor(re/30),di=re%30,fh=document.getElementById('fechaHechos').value,vd=obtenerValorDiario(fh),ml=tm*vd;rd.innerHTML=`<div class="resultado-calculo" style="background:#eff6ff;border-color:#93c5fd"><h4>📋 Total (${det.length} delito(s))</h4><strong>Prisión total:</strong> ${an}a ${me}m ${di}d (${tp} días)<br><strong>Multa total:</strong> ${tm} días<br><strong>Valor diario (${fh?fechaLegible(fh):'sin fecha'}):</strong> ${fmtMoneda(vd)}<br><strong>Multa líquida:</strong> ${fmtMoneda(ml)}</div>`;if(document.getElementById('conmutacionSelect').value==='si')actualizarConmutacion();}
+        function actualizarFechasConmutacion(){if(document.getElementById('conmutacionSelect').value==='si'){let fd=document.getElementById('fechaDetencion').value,fr=document.getElementById('fechaActo').value;if(fd)document.getElementById('fechaDetencionConmutacion').value=fd;if(fr)document.getElementById('fechaResolucionConmutacion').value=fr;actualizarConmutacion();}}
+        function actualizarConmutacion(){let fd=document.getElementById('fechaDetencionConmutacion').value,fr=document.getElementById('fechaResolucionConmutacion').value;if(!fd||!fr)return;let d1=new Date(fd+'T00:00:00'),d2=new Date(fr+'T00:00:00'),diff=Math.floor((d2-d1)/(1000*60*60*24));if(diff<0)diff=0;let tp=0;document.querySelectorAll('#contenedorDelitosInd .delito-bloque').forEach(bl=>{let id=bl.id.replace('delito-',''),rdiv=document.getElementById('resultado-'+id);if(rdiv&&rdiv.style.display!=='none'){let t=rdiv.textContent,match=t.match(/(\d+)\s*días/);if(match)tp+=parseInt(match[1]);}});let rest=Math.max(0,tp-diff),con=Math.floor(rest/4),vd=obtenerValorDiario(document.getElementById('fechaHechos').value),mlc=con*vd;document.getElementById('resultadoConmutacion').style.display='block';document.getElementById('resultadoConmutacion').innerHTML=`<strong>🔁 Conmutación:</strong><br>Días en prisión: ${diff}<br>Días restantes: ${rest}<br>Conmutación (÷4): <strong>${con} jornadas</strong><br>Equivalente en multa: <strong>${con} días</strong> = ${fmtMoneda(mlc)}`;}
+        function obtenerValorDiario(iso){if(!iso)return 0;let f=new Date(iso+'T00:00:00'),a=f.getFullYear(),m=f.getMonth()+1,d=f.getDate();if(a===2025&&(m>2||(m===2&&d>=1)))return 113.14;if(a===2025&&m===1)return 108.57;if(a===2024&&(m>2||(m===2&&d>=1)))return 108.57;if(a===2024&&m===1)return 103.74;if(a===2023&&(m>2||(m===2&&d>=1)))return 103.74;if(a===2023&&m===1)return 96.22;if(a===2022&&(m>2||(m===2&&d>=1)))return 96.22;if(a===2022&&m===1)return 89.62;if(a===2021&&(m>2||(m===2&&d>=1)))return 89.62;if(a===2021&&m===1)return 86.88;if(a===2020&&(m>2||(m===2&&d>=1)))return 86.88;if(a===2020&&m===1)return 84.49;if(a===2019&&(m>2||(m===2&&d>=1)))return 84.49;if(a===2019&&m===1)return 80.60;if(a===2018&&(m>2||(m===2&&d>=1)))return 80.60;if(a===2018&&m===1)return 75.49;if(a===2017&&(m>2||(m===2&&d>=1)))return 75.49;if(a===2017&&m===1)return 73.04;if(a===2016&&(m>2||(m===2&&d>=1)))return 73.04;if(a===2016&&m===1)return 70.10;if(a===2015&&m>=10)return 70.10;if(a===2015&&m>=4&&m<=9)return 68.28;if(a===2015&&m>=1&&m<=3)return 66.45;if(a===2014)return 63.77;if(a===2013)return 61.38;if(a===2012&&m===12&&d>=27)return 59.08;if(a===2012)return 59.08;if(a===2011)return 56.70;if(a===2010)return 54.47;if(a===2009)return 51.95;if(a===2008)return 49.50;if(a===2007)return 47.60;if(a===2006)return 45.81;if(a===2005)return 44.05;if(a===2004)return 42.11;if(a===2003)return 40.30;if(a===2002)return 38.30;if(a===2001)return 35.85;if(a===2000)return 32.70;return 0;}
+
+        function cargarListaStorage(){let r=localStorage.getItem('sgpt_lista_tocas');if(r){try{listaTocas=JSON.parse(r);}catch(e){listaTocas=[];}}}
+        function guardarListaStorage(){localStorage.setItem('sgpt_lista_tocas',JSON.stringify(listaTocas));}
+        function renderizarLista(){let c=document.getElementById('listaTocasContainer');document.getElementById('contadorTocas').textContent=listaTocas.length+' tocas';if(!listaTocas.length){c.innerHTML='<p style="text-align:center;color:#94a3b8;padding:40px">No hay tocas registrados.</p>';return;}let h='<table><thead><tr><th>Toca</th><th>Sala</th><th>Delito</th><th>Apelantes</th><th>Turno</th><th>Estado</th><th></th></tr></thead><tbody>';listaTocas.forEach(t=>{let ap=(t.apelantes||[]).join(', ')||'—',badge=(t.discosCompletos==='no'||t.agraviosCompletos==='no')?'<span class="badge badge-warn">Inc</span>':'<span class="badge badge-ok">OK</span>';h+=`<tr><td onclick="editarToca('${t._id}')"><strong>${t.toca||'—'}</strong></td><td onclick="editarToca('${t._id}')">${t.sala||'—'}</td><td onclick="editarToca('${t._id}')">${(t.delitosDatos||[]).join(', ')||'—'}</td><td onclick="editarToca('${t._id}')">${ap}</td><td onclick="editarToca('${t._id}')">${fechaLegible(t.turno)}</td><td onclick="editarToca('${t._id}')">${badge}</td><td><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();eliminarToca('${t._id}')"><i class="fas fa-trash"></i></button></td></tr>`;});h+='</tbody></table>';c.innerHTML=h;}
+        function mostrarLista(){document.getElementById('vistaLista').classList.remove('oculto');document.getElementById('vistaFormulario').classList.add('oculto');}
+        function mostrarFormulario(){document.getElementById('vistaLista').classList.add('oculto');document.getElementById('vistaFormulario').classList.remove('oculto');}
+
+        function recolectarDatos(){let delitosData=[];document.querySelectorAll('#contenedorDelitosInd .delito-bloque').forEach(bl=>{let id=bl.id.replace('delito-','');delitosData.push({id,nombre:bl.querySelector('strong').textContent,pminpA:bl.querySelector('.pminp-a')?.value||'',pminpM:bl.querySelector('.pminp-m')?.value||'',pminpD:bl.querySelector('.pminp-d')?.value||'',pmaxpA:bl.querySelector('.pmaxp-a')?.value||'',pmaxpM:bl.querySelector('.pmaxp-m')?.value||'',pmaxpD:bl.querySelector('.pmaxp-d')?.value||'',pminm:bl.querySelector('.pminm')?.value||'',pmaxm:bl.querySelector('.pmaxm')?.value||'',reproche:document.getElementById('reproche-'+id)?.value,reprocheTexto:document.getElementById('texto-reproche-'+id)?.textContent,resultado:document.getElementById('resultado-'+id)?.innerHTML||''});});return {_id:tocaActualId||Date.now().toString(),toca:document.getElementById('toca').value,sala:document.getElementById('sala').value,
+
+actoImpugnado:document.getElementById('actoImpugnado').value,
+fechaActo:document.getElementById('fechaActo').value,delitosDatos:Array.from(document.querySelectorAll('#listaDelitosDatos input')).map(i=>i.value).filter(v=>v),apelantes:Array.from(document.querySelectorAll('.apelante-principal:checked')).map(c=>c.value),hayAdhesivos:document.getElementById('hayAdhesivos').value,adhesivos:Array.from(document.querySelectorAll('.adhesivo-check:checked')).map(c=>c.value),distrito:document.getElementById('distrito').value,circuito:document.getElementById('circuito').value,turno:document.getElementById('turno').value,
+
+volumenDiscos:document.getElementById('volumenDiscos').value,
+fechaNotificacion:document.getElementById('fechaNotificacion').value,tipoResolucion:document.getElementById('tipoResolucion').value,detenidoSelect:document.getElementById('detenidoSelect').value,fechaDetencion:document.getElementById('fechaDetencion').value,tipoPrision:document.getElementById('tipoPrision').value,medidasCautelares:document.getElementById('medidasCautelares').value,audienciaSelect:document.getElementById('audienciaSelect').value,solicitanteAudiencia:document.getElementById('solicitanteAudiencia').value,admisionRecurso:document.getElementById('admisionRecurso').value,vencimiento:document.getElementById('vencimiento').value,discosCompletos:document.getElementById('discosCompletos').value,razonDiscos:document.getElementById('razonDiscos').value,agraviosCompletos:document.getElementById('agraviosCompletos').value,razonAgravios:document.getElementById('razonAgravios').value,violacionesSelect:document.getElementById('violacionesSelect').value,tipoViolacion:document.getElementById('tipoViolacion').value,parteViolacion:document.getElementById('parteViolacion').value,relacionadoSelect:document.getElementById('relacionadoSelect').value,tocaRelacionado:document.getElementById('tocaRelacionado').value,detalleRelacion:document.getElementById('detalleRelacion').value,excusaSelect:document.getElementById('excusaSelect').value,magistradoExcusado:document.getElementById('magistradoExcusado').value,resumenIncidencias:document.getElementById('resumenIncidencias').innerHTML,otraIncidencia:document.getElementById('otraIncidencia').value,aplicaIndividualizacion:document.getElementById('aplicaIndividualizacion').value,fechaHechos:document.getElementById('fechaHechos').value,delitosConcurso:delitosData,resumenPenas:document.getElementById('resumenPenas').innerHTML,conmutacionSelect:document.getElementById('conmutacionSelect').value,fechaDetencionConmutacion:document.getElementById('fechaDetencionConmutacion').value,fechaResolucionConmutacion:document.getElementById('fechaResolucionConmutacion').value,resultadoConmutacion:document.getElementById('resultadoConmutacion')?.innerHTML||'',suspensionDerechos:document.getElementById('suspensionDerechos').checked,amonestacion:document.getElementById('amonestacion').checked,otrasPenasSelect:document.getElementById('otrasPenasSelect').value,otrasPenasTexto:document.getElementById('otrasPenasTexto').value,aplicaReparacion:document.getElementById('aplicaReparacion').value,reparacionPendiente:document.getElementById('reparacionPendiente').value,cuantificacionDanos:document.getElementById('cuantificacionDanos').value,cuantificacionPerjuicios:document.getElementById('cuantificacionPerjuicios').value,medidasImpuestas:Array.from(document.querySelectorAll('.medida-impuesta:checked')).map(c=>c.value),otraMedidaManual:document.getElementById('otraMedidaManual').value,oportunidadPrincipales:Array.from(document.querySelectorAll('#panelOportunidadPrincipales .bloque-oportunidad')).map(b=>({nombre:b.querySelector('.fecha-interposicion')?.dataset.nombre,fecha:b.querySelector('.fecha-interposicion')?.value,resultado:b.querySelector('.resultado-texto')?.textContent})),oportunidadAdhesivos:Array.from(document.querySelectorAll('#panelOportunidadAdhesivos .bloque-oportunidad')).map(b=>({nombre:b.querySelector('.fecha-interposicion-adhesivo')?.dataset.nombre,traslado:b.querySelector('.fecha-traslado-adhesivo')?.value,fecha:b.querySelector('.fecha-interposicion-adhesivo')?.value,resultado:b.querySelector('.resultado-texto')?.textContent}))};}
+
+        function nuevoToca(){tocaActualId=null;idDelitoDatosContador=0;delitosConcurso=[];idDelitoContador=0;document.getElementById('tituloFormulario').textContent='Nuevo Toca';['toca','actoImpugnado','circuito','vencimiento','razonDiscos','razonAgravios','tipoViolacion','parteViolacion','tocaRelacionado','detalleRelacion','magistradoExcusado','medidasCautelares','otraIncidencia','cuantificacionDanos','cuantificacionPerjuicios','otraMedidaManual'].forEach(id=>document.getElementById(id).value='');['sala','distrito','volumenDiscos','tipoResolucion','solicitanteAudiencia'].forEach(id=>document.getElementById(id).value='');['fechaActo','turno','fechaNotificacion','admisionRecurso','fechaDetencion','fechaHechos','fechaDetencionConmutacion','fechaResolucionConmutacion'].forEach(id=>document.getElementById(id).value='');['hayAdhesivos','detenidoSelect','audienciaSelect','discosCompletos','agraviosCompletos','violacionesSelect','relacionadoSelect','excusaSelect','conmutacionSelect','otrasPenasSelect'].forEach(id=>document.getElementById(id).value='no');document.getElementById('aplicaIndividualizacion').value='si';document.getElementById('aplicaReparacion').value='si';document.getElementById('reparacionPendiente').value='si';document.getElementById('listaDelitosDatos').innerHTML='';document.getElementById('contenedorDelitosInd').innerHTML='';document.getElementById('resumenPenas').innerHTML='';document.getElementById('panelOportunidadPrincipales').innerHTML='';document.getElementById('panelOportunidadAdhesivos').innerHTML='';document.getElementById('resumenIncidencias').innerHTML='✅ Sin incidencias.';document.getElementById('resultadoConmutacion').style.display='none';document.getElementById('suspensionDerechos').checked=false;document.getElementById('amonestacion').checked=false;document.querySelectorAll('.apelante-principal,.adhesivo-check,.medida-impuesta').forEach(c=>c.checked=false);['panelAdhesivos','panelDetenidoSi','panelAudiencia','panelDiscosNo','panelAgraviosNo','panelViolaciones','panelRelacionado','panelExcusa','panelConmutacion','panelOtrasPenas','panelReparacionNo'].forEach(id=>document.getElementById(id).classList.add('oculto'));document.getElementById('panelMedidasCautelares').classList.remove('oculto');document.getElementById('contenidoIndividualizacion').classList.remove('oculto');document.getElementById('contenidoReparacion').classList.remove('oculto');mostrarFormulario();irPaso(1);}
+        function guardarToca(){let d=recolectarDatos();let idx=listaTocas.findIndex(t=>t._id===d._id);if(idx>=0)listaTocas[idx]=d;else listaTocas.unshift(d);guardarListaStorage();alert('Toca guardado.');mostrarLista();renderizarLista();}
+        function editarToca(id){let t=listaTocas.find(t=>t._id===id);if(!t)return;tocaActualId=id;delitosConcurso=[];idDelitoContador=0;document.getElementById('tituloFormulario').textContent='Editar Toca '+(t.toca||'');['toca','actoImpugnado','circuito','vencimiento','razonDiscos','razonAgravios','tipoViolacion','parteViolacion','tocaRelacionado','detalleRelacion','magistradoExcusado','medidasCautelares','otraIncidencia','cuantificacionDanos','cuantificacionPerjuicios','otraMedidaManual'].forEach(id=>document.getElementById(id).value=t[id]||'');['sala','distrito','volumenDiscos','tipoResolucion','solicitanteAudiencia'].forEach(id=>document.getElementById(id).value=t[id]||'');['fechaActo','turno','fechaNotificacion','admisionRecurso','fechaDetencion','fechaHechos','fechaDetencionConmutacion','fechaResolucionConmutacion'].forEach(id=>document.getElementById(id).value=t[id]||'');['hayAdhesivos','detenidoSelect','audienciaSelect','discosCompletos','agraviosCompletos','violacionesSelect','relacionadoSelect','excusaSelect','conmutacionSelect','otrasPenasSelect'].forEach(id=>document.getElementById(id).value=t[id]||'no');document.getElementById('aplicaIndividualizacion').value=t.aplicaIndividualizacion||'si';document.getElementById('aplicaReparacion').value=t.aplicaReparacion||'si';document.getElementById('reparacionPendiente').value=t.reparacionPendiente||'si';document.getElementById('resumenIncidencias').innerHTML=t.resumenIncidencias||'✅ Sin incidencias.';document.getElementById('suspensionDerechos').checked=t.suspensionDerechos||false;document.getElementById('amonestacion').checked=t.amonestacion||false;document.getElementById('listaDelitosDatos').innerHTML='';(t.delitosDatos||[]).forEach(n=>{let d=document.createElement('div');d.style.cssText='display:flex;gap:5px;align-items:center;margin-top:3px';d.innerHTML=`<input type="text" value="${n.replace(/"/g,'&quot;')}" style="flex:1"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>`;document.getElementById('listaDelitosDatos').appendChild(d);});document.querySelectorAll('.apelante-principal').forEach(c=>c.checked=(t.apelantes||[]).includes(c.value));document.querySelectorAll('.adhesivo-check').forEach(c=>c.checked=(t.adhesivos||[]).includes(c.value));document.querySelectorAll('.medida-impuesta').forEach(c=>c.checked=(t.medidasImpuestas||[]).includes(c.value));['hayAdhesivos','detenidoSelect','audienciaSelect','discosCompletos','agraviosCompletos','violacionesSelect','relacionadoSelect','excusaSelect','conmutacionSelect','otrasPenasSelect','aplicaIndividualizacion','aplicaReparacion','reparacionPendiente'].forEach(id=>document.getElementById(id).dispatchEvent(new Event('change')));actualizarPanelesOportunidad();document.getElementById('contenedorDelitosInd').innerHTML='';if(t.delitosConcurso&&t.delitosConcurso.length){t.delitosConcurso.forEach(del=>{idDelitoContador=Math.max(idDelitoContador,parseInt(del.id));delitosConcurso.push(parseInt(del.id));crearDelitoInd(parseInt(del.id),del.nombre||'');let bl=document.getElementById('delito-'+del.id);if(bl){bl.querySelector('.pminp-a').value=del.pminpA||'';bl.querySelector('.pminp-m').value=del.pminpM||'';bl.querySelector('.pminp-d').value=del.pminpD||'';bl.querySelector('.pmaxp-a').value=del.pmaxpA||'';bl.querySelector('.pmaxp-m').value=del.pmaxpM||'';bl.querySelector('.pmaxp-d').value=del.pmaxpD||'';bl.querySelector('.pminm').value=del.pminm||'';bl.querySelector('.pmaxm').value=del.pmaxm||'';document.getElementById('reproche-'+del.id).value=del.reproche||'-1';document.getElementById('texto-reproche-'+del.id).textContent=del.reprocheTexto||'Selecciona un punto';if(del.reproche&&parseInt(del.reproche)>=0){let pu=bl.querySelector(`.reproche-punto[data-i="${del.reproche}"]`);if(pu)pu.classList.add('seleccionado');document.getElementById('resultado-'+del.id).style.display='block';document.getElementById('resultado-'+del.id).innerHTML=del.resultado||'';}}});actualizarBotonOtroDelito();actualizarResumenPenas();}if(t.resultadoConmutacion)document.getElementById('resultadoConmutacion').innerHTML=t.resultadoConmutacion;setTimeout(()=>{(t.oportunidadPrincipales||[]).forEach((op,i)=>{let bl=document.querySelectorAll('#panelOportunidadPrincipales .bloque-oportunidad');if(bl[i]){bl[i].querySelector('.fecha-interposicion').value=op.fecha||'';bl[i].querySelector('.resultado-texto').textContent=op.resultado||'';}});(t.oportunidadAdhesivos||[]).forEach((op,i)=>{let bl=document.querySelectorAll('#panelOportunidadAdhesivos .bloque-oportunidad');if(bl[i]){bl[i].querySelector('.fecha-traslado-adhesivo').value=op.traslado||'';bl[i].querySelector('.fecha-interposicion-adhesivo').value=op.fecha||'';bl[i].querySelector('.resultado-texto').textContent=op.resultado||'';}});},200);mostrarFormulario();irPaso(1);}
+        function eliminarToca(id){if(!confirm('¿Eliminar?'))return;listaTocas=listaTocas.filter(t=>t._id!==id);guardarListaStorage();renderizarLista();}
+        function cancelarFormulario(){if(confirm('¿Salir sin guardar?'))mostrarLista();}
+        function agregarDelitoDatos(){idDelitoDatosContador++;let d=document.createElement('div');d.style.cssText='display:flex;gap:5px;align-items:center;margin-top:3px';d.innerHTML='<input type="text" placeholder="Ej. Robo calificado" style="flex:1"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>';document.getElementById('listaDelitosDatos').appendChild(d);}
+        function irPaso(p){for(let i=1;i<=6;i++)document.getElementById('panel'+i).classList.add('oculto');document.getElementById('panel'+p).classList.remove('oculto');document.querySelectorAll('.wizard-step').forEach((s,i)=>{s.classList.remove('active','completed');if(i+1<p)s.classList.add('completed');if(i+1===p)s.classList.add('active');});if(p===4&&document.getElementById('aplicaIndividualizacion').value==='si'&&delitosConcurso.length===0)cargarDelitosEnIndividualizacion();if(p===4&&document.getElementById('conmutacionSelect').value==='si')actualizarFechasConmutacion();if(p===6)generarReportePreview();}
+        function importarJSON(){let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=function(ev){try{let t=JSON.parse(ev.target.result);tocaActualId=t._id||Date.now().toString();delitosConcurso=[];idDelitoContador=0;document.getElementById('contenedorDelitosInd').innerHTML='';document.getElementById('resumenPenas').innerHTML='';document.getElementById('tituloFormulario').textContent='Importado: '+(t.toca||'');['toca','actoImpugnado','circuito','vencimiento','razonDiscos','razonAgravios','tipoViolacion','parteViolacion','tocaRelacionado','detalleRelacion','magistradoExcusado','medidasCautelares','otraIncidencia','cuantificacionDanos','cuantificacionPerjuicios','otraMedidaManual'].forEach(id=>document.getElementById(id).value=t[id]||'');['sala','distrito','volumenDiscos','tipoResolucion','solicitanteAudiencia'].forEach(id=>document.getElementById(id).value=t[id]||'');['fechaActo','turno','fechaNotificacion','admisionRecurso','fechaDetencion','fechaHechos','fechaDetencionConmutacion','fechaResolucionConmutacion'].forEach(id=>document.getElementById(id).value=t[id]||'');['hayAdhesivos','detenidoSelect','audienciaSelect','discosCompletos','agraviosCompletos','violacionesSelect','relacionadoSelect','excusaSelect','conmutacionSelect','otrasPenasSelect'].forEach(id=>document.getElementById(id).value=t[id]||'no');document.getElementById('aplicaIndividualizacion').value=t.aplicaIndividualizacion||'si';document.getElementById('aplicaReparacion').value=t.aplicaReparacion||'si';document.getElementById('reparacionPendiente').value=t.reparacionPendiente||'si';document.getElementById('resumenIncidencias').innerHTML=t.resumenIncidencias||'✅ Sin incidencias.';document.getElementById('suspensionDerechos').checked=t.suspensionDerechos||false;document.getElementById('amonestacion').checked=t.amonestacion||false;document.getElementById('listaDelitosDatos').innerHTML='';(t.delitosDatos||[]).forEach(n=>{let d=document.createElement('div');d.style.cssText='display:flex;gap:5px;align-items:center;margin-top:3px';d.innerHTML=`<input type="text" value="${n.replace(/"/g,'&quot;')}" style="flex:1"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>`;document.getElementById('listaDelitosDatos').appendChild(d);});document.querySelectorAll('.apelante-principal').forEach(c=>c.checked=(t.apelantes||[]).includes(c.value));document.querySelectorAll('.adhesivo-check').forEach(c=>c.checked=(t.adhesivos||[]).includes(c.value));document.querySelectorAll('.medida-impuesta').forEach(c=>c.checked=(t.medidasImpuestas||[]).includes(c.value));['hayAdhesivos','detenidoSelect','audienciaSelect','discosCompletos','agraviosCompletos','violacionesSelect','relacionadoSelect','excusaSelect','conmutacionSelect','otrasPenasSelect','aplicaIndividualizacion','aplicaReparacion','reparacionPendiente'].forEach(id=>document.getElementById(id).dispatchEvent(new Event('change')));actualizarPanelesOportunidad();if(t.delitosConcurso&&t.delitosConcurso.length){t.delitosConcurso.forEach(del=>{idDelitoContador=Math.max(idDelitoContador,parseInt(del.id));delitosConcurso.push(parseInt(del.id));crearDelitoInd(parseInt(del.id),del.nombre||'');let bl=document.getElementById('delito-'+del.id);if(bl){bl.querySelector('.pminp-a').value=del.pminpA||'';bl.querySelector('.pminp-m').value=del.pminpM||'';bl.querySelector('.pminp-d').value=del.pminpD||'';bl.querySelector('.pmaxp-a').value=del.pmaxpA||'';bl.querySelector('.pmaxp-m').value=del.pmaxpM||'';bl.querySelector('.pmaxp-d').value=del.pmaxpD||'';bl.querySelector('.pminm').value=del.pminm||'';bl.querySelector('.pmaxm').value=del.pmaxm||'';document.getElementById('reproche-'+del.id).value=del.reproche||'-1';document.getElementById('texto-reproche-'+del.id).textContent=del.reprocheTexto||'Selecciona un punto';if(del.reproche&&parseInt(del.reproche)>=0){let pu=bl.querySelector(`.reproche-punto[data-i="${del.reproche}"]`);if(pu)pu.classList.add('seleccionado');document.getElementById('resultado-'+del.id).style.display='block';document.getElementById('resultado-'+del.id).innerHTML=del.resultado||'';}}});actualizarBotonOtroDelito();actualizarResumenPenas();}if(t.resultadoConmutacion)document.getElementById('resultadoConmutacion').innerHTML=t.resultadoConmutacion;mostrarFormulario();irPaso(1);}catch(ex){alert('JSON inválido.');}};r.readAsText(f);};inp.click();}
+
+    
+
+function generarReportePreview(){
+    let d=recolectarDatos();
+    let ahora=new Date();
+    let fechaRepo=ahora.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    let horaRepo=ahora.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    let apelantes=(d.apelantes||[]).join(', ')||'Ninguno';
+    let adhesivos=d.hayAdhesivos==='si'?((d.adhesivos||[]).join(', ')||'Ninguno seleccionado'):'No hay';
+    let delitosMostrar='';
+    if(d.delitosDatos&&d.delitosDatos.length){
+        delitosMostrar='<ol style="margin:0;padding-left:18px">';
+        d.delitosDatos.forEach(del=>{delitosMostrar+='<li>'+del+'</li>';});
+        delitosMostrar+='</ol>';
+    }else{delitosMostrar='—';}
+    let detenido='';
+    if(d.detenidoSelect==='si'){
+        detenido='<strong>Sí.</strong><br>Fecha de detención: '+fechaLegible(d.fechaDetencion)+'<br>Tipo: '+(d.tipoPrision==='oficiosa'?'Prisión preventiva oficiosa':'Prisión preventiva justificada');
+    }else{
+        detenido='<strong>No.</strong><br>Medidas cautelares: '+(d.medidasCautelares||'No especificadas');
+    }
+    let audiencia=d.audienciaSelect==='si'?'<strong>Sí.</strong> Solicitada por: '+(d.solicitanteAudiencia||'No especificado'):'<strong>No.</strong>';
+    let discos='',agravios='';
+    if(d.discosCompletos==='si'){discos='<strong>Sí,</strong> completos y firmados.';}else{discos='<strong>No.</strong> Motivo: '+(d.razonDiscos||'No especificado');}
+    if(d.agraviosCompletos==='si'){agravios='<strong>Sí,</strong> completos y firmados.';}else{agravios='<strong>No.</strong> Motivo: '+(d.razonAgravios||'No especificado');}
+    let violaciones='',relacionado='',excusa='';
+    if(d.violacionesSelect==='si'){violaciones='<strong>Sí.</strong><br>Tipo: '+(d.tipoViolacion||'No especificado')+'<br>Alegada por: '+(d.parteViolacion||'No especificado');}else{violaciones='<strong>No.</strong>';}
+    if(d.relacionadoSelect==='si'){relacionado='<strong>Sí.</strong><br>Toca relacionado: '+(d.tocaRelacionado||'—')+'<br>Detalles: '+(d.detalleRelacion||'—');}else{relacionado='<strong>No.</strong>';}
+    if(d.excusaSelect==='si'){excusa='<strong>Sí.</strong><br>Magistrado excusado: '+(d.magistradoExcusado||'No especificado');}else{excusa='<strong>No.</strong>';}
+
+    // Oportunidad
+    let filasOportunidad='';
+    if(d.oportunidadPrincipales&&d.oportunidadPrincipales.length){
+        d.oportunidadPrincipales.forEach(op=>{
+            let resColor=op.resultado&&op.resultado.includes('✅')?'#166534':'#991b1b';
+            filasOportunidad+='<tr><td>'+op.nombre+' (principal)</td><td>'+fechaLegible(op.fecha)+'</td><td style="color:'+resColor+';font-weight:600">'+(op.resultado||'Sin verificar')+'</td></tr>';
+        });
+    }
+    if(d.oportunidadAdhesivos&&d.oportunidadAdhesivos.length){
+        d.oportunidadAdhesivos.forEach(op=>{
+            let resColor=op.resultado&&op.resultado.includes('✅')?'#166534':'#991b1b';
+            filasOportunidad+='<tr><td>'+op.nombre+' (adhesivo)</td><td>Traslado: '+fechaLegible(op.traslado)+' | Interposición: '+fechaLegible(op.fecha)+'</td><td style="color:'+resColor+';font-weight:600">'+(op.resultado||'Sin verificar')+'</td></tr>';
+        });
+    }
+    if(!filasOportunidad)filasOportunidad='<tr><td colspan="3" style="text-align:center;color:#94a3b8">No se verificaron recursos.</td></tr>';
+
+    // Individualización
+    let individualizacion='';
+    if(d.aplicaIndividualizacion==='si'){
+        individualizacion='<h4>Parámetros de punibilidad por delito</h4>';
+        if(d.delitosConcurso&&d.delitosConcurso.length){
+            d.delitosConcurso.forEach((del,i)=>{
+                let nombreDelito=del.nombre||('Delito #'+(i+1));
+                individualizacion+='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0">';
+                individualizacion+='<strong style="color:#2563eb">📌 '+nombreDelito+'</strong><br>';
+                individualizacion+='<strong>Prisión mínima:</strong> '+(del.pminpA||'0')+' años, '+(del.pminpM||'0')+' meses, '+(del.pminpD||'0')+' días<br>';
+                individualizacion+='<strong>Prisión máxima:</strong> '+(del.pmaxpA||'0')+' años, '+(del.pmaxpM||'0')+' meses, '+(del.pmaxpD||'0')+' días<br>';
+                individualizacion+='<strong>Multa mínima:</strong> '+(del.pminm||'0')+' días<br>';
+                individualizacion+='<strong>Multa máxima:</strong> '+(del.pmaxm||'0')+' días<br>';
+                individualizacion+='<strong>Grado de reproche seleccionado:</strong> '+(del.reprocheTexto||'No seleccionado')+'<br>';
+                if(del.resultado){
+                    let resLimpio=del.resultado.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+                    individualizacion+='<strong>Resultado:</strong> '+resLimpio;
+                }
+                individualizacion+='</div>';
+            });
+        }else{
+            individualizacion+='<p style="color:#94a3b8">No se registraron delitos para individualización.</p>';
+        }
+        if(d.resumenPenas){
+            individualizacion+='<h4>Resumen total</h4>'+d.resumenPenas;
+        }
+        if(d.conmutacionSelect==='si'&&d.resultadoConmutacion){
+            individualizacion+='<h4>Conmutación de la pena</h4>';
+            individualizacion+='<strong>Fecha de detención:</strong> '+fechaLegible(d.fechaDetencionConmutacion)+'<br>';
+            individualizacion+='<strong>Fecha de resolución:</strong> '+fechaLegible(d.fechaResolucionConmutacion)+'<br>';
+            individualizacion+=d.resultadoConmutacion;
+        }
+        let accesorias=[];
+        if(d.suspensionDerechos)accesorias.push('Suspensión de derechos civiles y políticos');
+        if(d.amonestacion)accesorias.push('Amonestación');
+        if(d.otrasPenasSelect==='si'&&d.otrasPenasTexto)accesorias.push(d.otrasPenasTexto);
+        if(accesorias.length){
+            individualizacion+='<h4>Penas accesorias</h4>';
+            accesorias.forEach(a=>{individualizacion+='✓ '+a+'<br>';});
+        }
+    }else{
+        individualizacion='<p style="color:#94a3b8">No aplica individualización de sanciones.</p>';
+    }
+
+    // Reparación
+    let reparacion='';
+    if(d.aplicaReparacion==='si'){
+        reparacion='<strong>¿Pendiente para ejecución?:</strong> '+(d.reparacionPendiente==='si'?'Sí':'No')+'<br>';
+        if(d.reparacionPendiente==='no'){
+            reparacion+='<strong>Cuantificación de daños:</strong> '+(d.cuantificacionDanos||'—')+'<br>';
+            reparacion+='<strong>Cuantificación de perjuicios:</strong> '+(d.cuantificacionPerjuicios||'—')+'<br>';
+        }
+        let medidas=[...(d.medidasImpuestas||[])];
+        if(d.otraMedidaManual)medidas.push(d.otraMedidaManual);
+        reparacion+='<strong>Otras medidas impuestas:</strong><br>';
+        if(medidas.length){
+            medidas.forEach(m=>{reparacion+='✓ '+m+'<br>';});
+        }else{
+            reparacion+='Ninguna<br>';
+        }
+    }else{
+        reparacion='<p style="color:#94a3b8">No aplica reparación del daño.</p>';
+    }
+
+    let html='';
+    html+='<div style="text-align:center;margin-bottom:25px">';
+    html+='<h2 style="color:#0f172a;margin:0;font-size:1.8rem">⚖️ REPORTE DE TOCA PENAL</h2>';
+    html+='<p style="color:#64748b;margin:5px 0;font-size:0.9rem">Generado el '+fechaRepo+' a las '+horaRepo+' hrs</p>';
+    html+='<p style="color:#2563eb;font-weight:700;font-size:1.3rem;margin:10px 0">Toca: '+(d.toca||'—')+'</p>';
+    html+='</div>';
+
+    html+='<h3>📋 Datos generales</h3>';
+    html+='<table><tr><td class="td-label">Sala</td><td>'+(d.sala||'—')+'</td></tr>';
+  html+='<tr><td class="td-label">Acto impugnado</td><td>'+(d.actoImpugnado||'—')+' ('+fechaLegible(d.fechaActo)+')</td></tr>';
+    html+='<tr><td class="td-label">Delito(s)</td><td>'+delitosMostrar+'</td></tr>';
+    html+='<tr><td class="td-label">Apelantes principales</td><td>'+apelantes+'</td></tr>';
+    html+='<tr><td class="td-label">Apelantes adhesivos</td><td>'+adhesivos+'</td></tr>';
+    html+='<tr><td class="td-label">Procedencia (Distrito)</td><td>'+(d.distrito||'—')+'</td></tr>';
+    html+='<tr><td class="td-label">Circuito Judicial</td><td>'+(d.circuito||'—')+'</td></tr>';
+    html+='<tr><td class="td-label">Turno</td><td>'+fechaLegible(d.turno)+'</td></tr>';
+  html+='<tr><td class="td-label">Volumen</td><td>'+(d.volumenDiscos||'—')+' discos</td></tr>';
+    html+='<tr><td class="td-label">Fecha de notificación/audiencia</td><td>'+fechaLegible(d.fechaNotificacion)+'</td></tr>';
+    html+='<tr><td class="td-label">Tipo de resolución</td><td>'+(d.tipoResolucion==='auto'?'Auto (3 días)':d.tipoResolucion==='abreviado'?'Sentencia Abreviado (5 días)':d.tipoResolucion==='juicioOral'?'Sentencia Juicio Oral (10 días)':'—')+'</td></tr>';
+    html+='<tr><td class="td-label">Asunto con detenido</td><td>'+detenido+'</td></tr>';
+    html+='<tr><td class="td-label">Audiencia en 2ª instancia</td><td>'+audiencia+'</td></tr>';
+    html+='<tr><td class="td-label">Admisión del recurso</td><td>'+fechaLegible(d.admisionRecurso)+'</td></tr>';
+    html+='<tr><td class="td-label">Vencimiento tentativo</td><td>'+fechaLegible(d.vencimiento)+'</td></tr>';
+    html+='</table>';
+
+    html+='<h3>✅ Control de constancias</h3>';
+    html+='<table><tr><td class="td-label">Discos completos y firmados</td><td>'+discos+'</td></tr>';
+    html+='<tr><td class="td-label">Agravios completos y firmados</td><td>'+agravios+'</td></tr></table>';
+
+    html+='<h3>⏱️ Oportunidad del recurso</h3>';
+    html+='<table><tr><th>Apelante</th><th>Fechas</th><th>Resultado</th></tr>'+filasOportunidad+'</table>';
+
+    html+='<h3>⚠️ Situaciones relevantes</h3>';
+    html+='<table><tr><td class="td-label">Violaciones procesales alegadas</td><td>'+violaciones+'</td></tr>';
+    html+='<tr><td class="td-label">Asunto relacionado con otro toca</td><td>'+relacionado+'</td></tr>';
+    html+='<tr><td class="td-label">Excusa de magistrado</td><td>'+excusa+'</td></tr></table>';
+
+    html+='<h3>🚨 Resumen de incidencias</h3>';
+    html+=document.getElementById('resumenIncidencias').innerHTML;
+    if(d.otraIncidencia)html+='<br><strong>Otra incidencia:</strong> '+d.otraIncidencia;
+
+    html+='<h3>⚖️ Individualización de sanciones</h3>'+individualizacion;
+    html+='<h3>💔 Reparación del daño</h3>'+reparacion;
+
+    html+='<hr style="margin-top:30px">';
+    html+='<p style="text-align:center;color:#94a3b8;font-size:0.8rem;margin-top:20px">SGTP · Sistema de Gestión de Tocas Penales · Segunda Instancia · Secretario: Hamet Tadeo Mendoza López</p>';
+
+    document.getElementById('reportePreview').innerHTML=html;
+}
+
+function descargarDOCX(){
+    let d=recolectarDatos();
+    const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,WidthType,HeadingLevel}=docx;
+    function celda(t,b=false,w=4000){return new TableCell({width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:String(t),bold:b,size:20,font:'Segoe UI'})]})]});}
+    function fila(l,v){return new TableRow({children:[celda(l,true,3500),celda(v,false,6500)]});}
+    let ap=(d.apelantes||[]).join(', ')||'Ninguno',ad=d.hayAdhesivos==='si'?((d.adhesivos||[]).join(', ')||'Ninguno'):'No hay';
+    let delText=(d.delitosDatos||[]).join(', ')||'—';
+    let children=[new Paragraph({children:[new TextRun({text:'REPORTE DE TOCA PENAL',bold:true,size:36,font:'Segoe UI',color:'0f172a'})]}),new Paragraph({children:[new TextRun({text:'Toca: '+(d.toca||'—'),bold:true,size:28,color:'2563eb'})]}),new Paragraph({spacing:{after:300}}),new Table({width:{size:10000,type:WidthType.DXA},rows:[fila('Sala',d.sala||'—'),
+
+fila('Acto impugnado',(d.actoImpugnado||'—')+' ('+fechaLegible(d.fechaActo)+')')
+,fila('Delito(s)',delText),fila('Apelantes principales',ap),fila('Apelantes adhesivos',ad),fila('Procedencia',d.distrito||'—'),fila('Circuito',d.circuito||'—'),fila('Turno',fechaLegible(d.turno)),
+
+fila('Volumen',(d.volumenDiscos||'—')+' discos')
+]})];
+    let doc=new Document({sections:[{children}]});
+    Packer.toBlob(doc).then(blob=>{saveAs(blob,'reporte_toca_'+(d.toca||'sinToca')+'.docx');});
+}
+
+function descargarPDF(){
+    generarReportePreview();
+    setTimeout(()=>{
+        let v=window.open('','_blank','width=900,height=700');
+        v.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte Toca '+(document.getElementById('toca').value||'sinToca')+'</title><style>body{font-family:Segoe UI,sans-serif;padding:25px;color:#1e293b;line-height:1.6;max-width:850px;margin:0 auto}h2{color:#0f172a}h3{color:#2563eb;margin-top:25px;border-bottom:1px solid #e2e8f0;padding-bottom:5px}h4{color:#1e40af;margin-top:15px}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:8px 12px;border:1px solid #ddd;font-size:13px}.td-label{font-weight:600;background:#f8fafc;width:40%}th{background:#f8fafc;text-align:left;padding:8px 12px;font-weight:600;font-size:13px;border:1px solid #ddd}ol{margin:0;padding-left:18px}@media print{body{padding:10px}}</style></head><body>'+document.getElementById('reportePreview').innerHTML+'</body></html>');
+        v.document.close();
+        setTimeout(()=>v.print(),400);
+    },200);
+}
+
+        window.nuevoToca=nuevoToca;window.importarJSON=importarJSON;window.guardarToca=guardarToca;window.editarToca=editarToca;window.eliminarToca=eliminarToca;window.cancelarFormulario=cancelarFormulario;window.irPaso=irPaso;window.agregarDelitoDatos=agregarDelitoDatos;window.eliminarDelitoInd=eliminarDelitoInd;window.agregarDelitoInd=agregarDelitoInd;window.descargarDOCX=descargarDOCX;window.descargarPDF=descargarPDF;
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+    </script>
+</body>
+</html>
